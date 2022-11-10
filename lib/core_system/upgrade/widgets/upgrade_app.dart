@@ -61,8 +61,9 @@ class JackUpgradeApp {
         );
       } else if (latestAppVersion > currentVersion) {
         bool later = false;
-        await AuthStorage.deleteToken();
-        later = await AuthStorage.getLaterUpdate() == "false" ? false : true;
+        await JackAuthStorage.deleteToken();
+        later =
+            await JackAuthStorage.getLaterUpdate() == "false" ? false : true;
         if (later) {
           return;
         }
@@ -87,7 +88,7 @@ class JackUpgradeApp {
   }
 
   _updateDoNotShowAgain() async {
-    await AuthStorage.setLaterUpdate(code: "true");
+    await JackAuthStorage.setLaterUpdate(code: "true");
   }
 
   _showUpdateDialog(context, String message, {bool laterBtn = false}) async {
