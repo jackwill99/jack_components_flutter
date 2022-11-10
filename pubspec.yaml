@@ -51,10 +51,6 @@ dependencies:
   #  workmanager: ^0.5.1
   # modal bottom sheet
   modal_bottom_sheet: ^2.1.2
-  # google sign in
-  google_sign_in: ^5.4.2
-  # apple sign in
-  sign_in_with_apple: ^4.1.0
 
 dev_dependencies:
   flutter_test:

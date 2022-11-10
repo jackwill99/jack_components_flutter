@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:example/Z+security/user_provider.dart';
 import 'package:example/Z+security/user_secure_info.dart';
+import 'package:example/util/networkConnectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:jack_components/core_system/camera/widget/camera.dart';
 import 'package:jack_components/core_system/network/network_config.dart';
@@ -44,10 +45,10 @@ class _MyHomeState extends State<MyHome> {
   void initState() {
     super.initState();
     startTimer();
+    subscription();
 
     ///TODO remove this
     initCamera();
-    subscription();
   }
 
   void subscription() async {
@@ -55,6 +56,7 @@ class _MyHomeState extends State<MyHome> {
     sub = JackNetworkConfig.getStatus.stream.listen((event) {
       print("----------------------jack networkconfig----------------------");
       print(event);
+      context.read<NetworkConnect>().updateStatus(event.name);
       if (event.name != 'none') {
         JackUpgradeApp(
           context: context,
