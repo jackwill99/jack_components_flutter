@@ -23,7 +23,7 @@ class JackCamera extends StatefulWidget {
 class _JackCameraState extends State<JackCamera> with WidgetsBindingObserver {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
-  final bool _isRearCameraSelected = true;
+  bool _isRearCameraSelected = true;
 
   /// zoom level
   double _minAvailableZoom = 1.0;
@@ -111,6 +111,9 @@ class _JackCameraState extends State<JackCamera> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    print("----------------------$AppLifecycleState----------------------");
+
     /// Running the camera on any device is considered a memory-hungry task,
     /// so how you handle freeing up the memory resources, and when that occurs, is important.
     final CameraController cameraController = _controller;
@@ -132,6 +135,7 @@ class _JackCameraState extends State<JackCamera> with WidgetsBindingObserver {
   Future<void> _takeCapture() async {
     // Take the Picture in a try / catch block. If anything goes wrong,
     // catch the error.
+    print('hay');
     try {
       // Ensure that the camera is initialized.
       await _initializeControllerFuture;
@@ -147,6 +151,7 @@ class _JackCameraState extends State<JackCamera> with WidgetsBindingObserver {
       if (!mounted) return;
       // context.read<CameraProvider>().updateUintBase(productImage);
       // context.read<CameraProvider>().updateFilePath(File(image.path));
+      print(image.path);
       Navigator.of(context)
           .pop({"imageUintBase": productImage, "imagePath": File(image.path)});
     } catch (e) {
@@ -158,207 +163,215 @@ class _JackCameraState extends State<JackCamera> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Take a Picture'),
-      //   centerTitle: true,
-      // ),
-      // You must wait until the controller is initialized before displaying the
-      // camera preview. Use a FutureBuilder to display a loading spinner until the
-      // controller has finished initializing.
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              /* +++++++++++++++++ Top Level Stack +++++++++++++++++ */
-              Container(
-                height: 75,
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 0, 0, 0),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10.0, top: 50),
-                      child: GestureDetector(
-                        onTap: () => Navigator.of(context).pop(),
-                        child: const Text(
-                          'Close',
-                          style: TextStyle(color: Colors.white, fontSize: 18),
+    return SafeArea(
+      child: Scaffold(
+        // appBar: AppBar(
+        //   title: const Text('Take a Picture'),
+        //   centerTitle: true,
+        // ),
+        // You must wait until the controller is initialized before displaying the
+        // camera preview. Use a FutureBuilder to display a loading spinner until the
+        // controller has finished initializing.
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                /* +++++++++++++++++ Top Level Stack +++++++++++++++++ */
+                Container(
+                  height: 55,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    border: Border.all(color: Colors.purple),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          right: 10.0,
+                        ),
+                        child: GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: const Text(
+                            'Close',
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
 
-              /* ---------------------- Camera View ----------------------  */
-              Expanded(
-                child: FutureBuilder<void>(
-                  future: _initializeControllerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      // If the Future is complete, display the preview.
-                      return Container(
-                        decoration: const BoxDecoration(color: Colors.black),
-                        child: Center(
-                          child: CameraPreview(_controller),
-                        ),
-                      );
-                    } else {
-                      // Otherwise, display a loading indicator.
-                      // return const Center(child: CircularProgressIndicator());
-                      return Container(
-                        color: Colors.black87,
-                      );
-                    }
-                  },
+                /* ---------------------- Camera View ----------------------  */
+                Expanded(
+                  child: FutureBuilder<void>(
+                    future: _initializeControllerFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        // If the Future is complete, display the preview.
+
+                        return Container(
+                          decoration: const BoxDecoration(color: Colors.black),
+                          child: Center(
+                            child: CameraPreview(_controller),
+                          ),
+                        );
+                      } else {
+                        // Otherwise, display a loading indicator.
+                        // return const Center(child: CircularProgressIndicator());
+                        return Container(
+                          color: Colors.black87,
+                        );
+                      }
+                    },
+                  ),
                 ),
-              ),
 
-              /* +++++++++++++++++ Bottom Level Stack +++++++++++++++++ */
-              Center(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    height: 100,
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 0, 0, 0),
-                        border: Border.all(color: Colors.red)),
-                    child: Column(
-                      children: [
-                        /* --------------------- zoom level control -----------------------  */
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Slider(
-                                value: _currentZoomLevel,
-                                min: _minAvailableZoom,
-                                max: _maxAvailableZoom,
-                                activeColor: Colors.white,
-                                inactiveColor: Colors.white30,
-                                onChanged: (value) async {
-                                  setState(() {
-                                    _currentZoomLevel = value;
-                                  });
-                                  await _controller.setZoomLevel(value);
-                                },
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.black87,
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  '${_currentZoomLevel.toStringAsFixed(1)}x',
-                                  style: const TextStyle(color: Colors.white),
+                /* +++++++++++++++++ Bottom Level Stack +++++++++++++++++ */
+                Center(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      height: 140,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                          border: Border.all(color: Colors.red)),
+                      child: Column(
+                        children: [
+                          /* --------------------- zoom level control -----------------------  */
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Slider(
+                                  value: _currentZoomLevel,
+                                  min: _minAvailableZoom,
+                                  max: _maxAvailableZoom,
+                                  activeColor: Colors.white,
+                                  inactiveColor: Colors.white30,
+                                  onChanged: (value) async {
+                                    setState(() {
+                                      _currentZoomLevel = value;
+                                    });
+                                    await _controller.setZoomLevel(value);
+                                  },
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        /* +++++++++++++++++ camera bottom control +++++++++++++++++ */
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   crossAxisAlignment: CrossAxisAlignment.start,
-                        //   children: [
-                        //     const SizedBox(
-                        //       width: 50,
-                        //     ),
-                        //     InkWell(
-                        //       onTap: () async {
-                        //         _takeCapture();
-                        //       },
-                        //       child: const SizedBox(
-                        //         width: 60,
-                        //         height: 60,
-                        //         child: Icon(
-                        //           Icons.fiber_manual_record,
-                        //           color: Colors.white,
-                        //           size: 75,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     GestureDetector(
-                        //       onTap: () {
-                        //         setState(() {
-                        //           _isRearCameraSelected = !_isRearCameraSelected;
-                        //         });
-                        //         cameraInit(
-                        //             widget.camera[_isRearCameraSelected ? 0 : 1]);
-                        //       },
-                        //       child: const Icon(
-                        //         Icons.flip_camera_ios_rounded,
-                        //         color: Colors.white,
-                        //         size: 40,
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-                      ],
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.black87,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    '${_currentZoomLevel.toStringAsFixed(1)}x',
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          /* +++++++++++++++++ camera bottom control +++++++++++++++++ */
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(
+                                width: 50,
+                              ),
+                              InkWell(
+                                onTap: () async {
+                                  await _takeCapture();
+                                },
+                                child: const SizedBox(
+                                  width: 60,
+                                  height: 60,
+                                  child: Icon(
+                                    Icons.fiber_manual_record,
+                                    color: Colors.white,
+                                    size: 75,
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _isRearCameraSelected =
+                                        !_isRearCameraSelected;
+                                  });
+                                  cameraInit(widget
+                                      .camera[_isRearCameraSelected ? 0 : 1]);
+                                },
+                                child: const Icon(
+                                  Icons.flip_camera_ios_rounded,
+                                  color: Colors.white,
+                                  size: 40,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          /* +++++++++++++++++ exposure view +++++++++++++++++ */
-          Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.63,
-              decoration:
-                  BoxDecoration(border: Border.all(color: Colors.green)),
-              child: Padding(
-                padding: const EdgeInsets.only(right: 20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '${_currentExposureOffset.toStringAsFixed(1)}x',
-                          style: const TextStyle(color: Colors.black),
+              ],
+            ),
+            /* +++++++++++++++++ exposure view +++++++++++++++++ */
+            Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.63,
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.green)),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '${_currentExposureOffset.toStringAsFixed(1)}x',
+                            style: const TextStyle(color: Colors.black),
+                          ),
                         ),
                       ),
-                    ),
-                    RotatedBox(
-                      quarterTurns: 3,
-                      child: SizedBox(
-                        height: 30,
-                        width: MediaQuery.of(context).size.height * 0.5,
-                        child: Slider(
-                          value: _currentExposureOffset,
-                          min: _minAvailableExposureOffset,
-                          max: _maxAvailableExposureOffset,
-                          activeColor: Colors.white,
-                          inactiveColor: Colors.white30,
-                          onChanged: (value) async {
-                            setState(() {
-                              _currentExposureOffset = value;
-                            });
-                            await _controller.setExposureOffset(value);
-                          },
+                      RotatedBox(
+                        quarterTurns: 3,
+                        child: SizedBox(
+                          height: 30,
+                          width: MediaQuery.of(context).size.height * 0.5,
+                          child: Slider(
+                            value: _currentExposureOffset,
+                            min: _minAvailableExposureOffset,
+                            max: _maxAvailableExposureOffset,
+                            activeColor: Colors.white,
+                            inactiveColor: Colors.white30,
+                            onChanged: (value) async {
+                              setState(() {
+                                _currentExposureOffset = value;
+                              });
+                              await _controller.setExposureOffset(value);
+                            },
+                          ),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
