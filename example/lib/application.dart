@@ -1,17 +1,18 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:example/Z+security/user_provider.dart';
 import 'package:example/Z+security/user_secure_info.dart';
 import 'package:example/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:jack_components/ui/loading/loading.dart';
-import 'package:provider/provider.dart';
 import 'package:jack_components/core_system/local_notification_api/local_notification_api.dart';
-import 'package:jack_components/core_system/network/network_config.dart';
+import 'package:jack_components/ui/loading/loading.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class Application extends StatefulWidget {
   static const routeName = '/Application';
+
   const Application({Key? key}) : super(key: key);
 
   @override
@@ -22,9 +23,6 @@ class _ApplicationState extends State<Application> {
   @override
   void initState() {
     super.initState();
-
-    /// LocalNotification intialization
-    JackLocalNotificationApi.init();
 
     /// listening clicked LocalNotification
     JackLocalNotificationApi.listenNotifications((event) {
@@ -69,12 +67,6 @@ class _ApplicationState extends State<Application> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-
-    /// FCM-firebase cloud messaging setup
-    // FCMConfig.firebaseSetup(context);
-
-    /// Network Connectivity
-    JackNetworkConfig.initConnectivity(context);
 
     if (Platform.isAndroid) {
       // await Permission.sms.request();

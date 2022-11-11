@@ -57,12 +57,11 @@ class JackLocalNotificationApi {
 
     return NotificationDetails(
       android: AndroidNotificationDetails(
-        'max_importance_channel', // id
-        'Max Importance Notifications', // title
-        channelDescription:
-            'This channel is used for important channel notifications.',
+        'high_importance_channel', // id
+        'High Importance Notifications', // title
+        channelDescription: 'This channel is used for important notifications.',
         // description
-        importance: Importance.max,
+        importance: Importance.high,
         styleInformation: styleInformation,
         sound: sound != null
             ? RawResourceAndroidNotificationSound(sound.split(".").first)

@@ -6,6 +6,8 @@ import 'package:example/util/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jack_components/core_system/local_notification_api/local_notification_api.dart';
+import 'package:jack_components/core_system/network/network_config.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -60,6 +62,15 @@ Future<void> main() async {
 
   // camera setup
   await availableCameras();
+
+  /// FCM-firebase cloud messaging setup
+  // FCMConfig.firebaseSetup(context);
+
+  /// Network Connectivity
+  JackNetworkConfig.initConnectivity();
+
+  /// LocalNotification intialization
+  JackLocalNotificationApi.init();
 
   SystemChrome.setPreferredOrientations(
           [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])

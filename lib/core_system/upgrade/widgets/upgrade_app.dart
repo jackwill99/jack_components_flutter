@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jack_components/ui/dialog/jack_dialog_morphism.dart';
 import 'package:jack_components/util/launch_to_appID.dart';
 import 'package:jack_components/util/storage.dart';
@@ -17,6 +16,7 @@ class JackUpgradeApp {
     required this.androidAppId,
     required this.iOSAppId,
   }) {
+    print("----------------------checkLatestVersion----------------------");
     _checkLatestVersion(context);
   }
 
@@ -36,21 +36,20 @@ class JackUpgradeApp {
 
     //Change
     // var response = await queryBuilder.query();
-    const response = {"success": true};
-
-    if (response['success']!) {
+    const response = {"success": true, "min": "1.0.0", "lat": "1.0.0"};
+    if (response['success'] == true) {
       //Change
       //Parse the result here to get the info
-      Version minAppVersion = Version.parse("1.0.0");
-      Version latestAppVersion = Version.parse("1.0.2");
+      Version minAppVersion = Version.parse(response['min'] as String);
+      Version latestAppVersion = Version.parse(response['lat'] as String);
 
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       Version currentVersion = Version.parse(packageInfo.version);
       print("----------------------upgrade----------------------");
       print(latestAppVersion > currentVersion);
       if (minAppVersion > currentVersion) {
+        print("----------------------one----------------------");
         if (ctx != null) {
-          print('ctx exist');
           return;
         } else {
           _updateContext(context);
@@ -60,6 +59,7 @@ class JackUpgradeApp {
           "Please update the app to continue",
         );
       } else if (latestAppVersion > currentVersion) {
+        print("----------------------two----------------------");
         bool later = false;
         await JackAuthStorage.deleteToken();
         later =
@@ -68,7 +68,6 @@ class JackUpgradeApp {
           return;
         }
         if (ctx != null) {
-          print('ctx exist');
           return;
         } else {
           _updateContext(context);
@@ -77,8 +76,8 @@ class JackUpgradeApp {
         _showUpdateDialog(context, "Please update the app to continue",
             laterBtn: true);
       } else {
-        Navigator.of(context).pop();
-        _updateContext(null);
+        // Navigator.of(context).pop();
+        // _updateContext(null);
       }
     }
   }
@@ -97,7 +96,7 @@ class JackUpgradeApp {
     await showDialog<String>(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (BuildContext cct) {
         String title = "App Update Available";
         String btnLabel = "Update Now";
         return WillPopScope(
@@ -105,18 +104,14 @@ class JackUpgradeApp {
           child: JackUIDialogMorphism(
             title: Text(
               title,
-              style: TextStyle(
-                fontSize: 17.sp,
-                color: Colors.black,
+              style: const TextStyle(
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
             description: Text(
               message,
-              style: TextStyle(
-                  fontSize: 15.sp,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
             ),
             confirmFunc: _onUpdateNowClicked,
             confirmText: btnLabel,
@@ -126,14 +121,14 @@ class JackUpgradeApp {
                       _updateDoNotShowAgain();
                     }
                     _updateContext(null);
-                    Navigator.of(context).pop();
+                    Navigator.of(cct).pop();
                   }
                 : null,
             undoText: laterBtn ? "Later" : null,
             body: laterBtn ? const DoNotAskCheckbox() : null,
             topImage: Image.asset(
-              "assets/img/update_t.png",
-              height: 120.h,
+              "assets/images/update.png",
+              height: 170,
             ),
             gradientStart: 0.9,
             gradientEnd: 0.6,
@@ -179,9 +174,6 @@ class _DoNotAskCheckboxState extends State<DoNotAskCheckbox> {
           onTap: updateShow,
           child: const Text(
             "Don't ask me again",
-            style: TextStyle(
-              color: Colors.black,
-            ),
           ),
         ),
       ],

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/subjects.dart';
 
@@ -27,7 +26,7 @@ class JackNetworkConfig {
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
-  static Future<void> initConnectivity(BuildContext context) async {
+  static Future<void> initConnectivity() async {
     late ConnectivityResult result;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
