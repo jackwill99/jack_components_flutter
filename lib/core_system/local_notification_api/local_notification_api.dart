@@ -56,26 +56,25 @@ class JackLocalNotificationApi {
           )
         : null;
 
-    return notificationDetails ??
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            'high_importance_channel', // id
-            'High Importance Notifications', // title
-            channelDescription:
-                'This channel is used for important notifications.',
-            // description
-            importance: Importance.high,
-            styleInformation: styleInformation,
-            sound: sound != null
-                ? RawResourceAndroidNotificationSound(sound.split(".").first)
-                : null,
-          ),
-          iOS: DarwinNotificationDetails(
-            presentAlert: true,
-            presentBadge: true,
-            sound: sound,
-          ),
-        );
+    return NotificationDetails(
+      android: AndroidNotificationDetails(
+        'max_importance_channel', // id
+        'Max Importance Notifications', // title
+        channelDescription:
+            'This channel is used for important channel notifications.',
+        // description
+        importance: Importance.max,
+        styleInformation: styleInformation,
+        sound: sound != null
+            ? RawResourceAndroidNotificationSound(sound.split(".").first)
+            : null,
+      ),
+      iOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        sound: sound,
+      ),
+    );
   }
 
   static Future<void> showNotification({
@@ -123,4 +122,8 @@ class JackLocalNotificationApi {
           callbackFunc(event);
         },
       );
+
+  static Future<void> cancelNotifications({required int id}) async {
+    await _notifications.cancel(id);
+  }
 }
