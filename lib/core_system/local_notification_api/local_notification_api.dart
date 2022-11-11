@@ -34,6 +34,7 @@ class JackLocalNotificationApi {
     String? imagePath,
     DownloadFileType? imageType,
     String? sound,
+    NotificationDetails? notificationDetails,
   }) async {
     /// local notification with Icon and Image
     final largeIconPath = iconPath != null && iconPath.startsWith("http")
@@ -55,24 +56,26 @@ class JackLocalNotificationApi {
           )
         : null;
 
-    return NotificationDetails(
-      android: AndroidNotificationDetails(
-        'high_importance_channel', // id
-        'High Importance Notifications', // title
-        channelDescription: 'This channel is used for important notifications.',
-        // description
-        importance: Importance.high,
-        styleInformation: styleInformation,
-        sound: sound != null
-            ? RawResourceAndroidNotificationSound(sound.split(".").first)
-            : null,
-      ),
-      iOS: DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        sound: sound,
-      ),
-    );
+    return notificationDetails ??
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            'high_importance_channel', // id
+            'High Importance Notifications', // title
+            channelDescription:
+                'This channel is used for important notifications.',
+            // description
+            importance: Importance.high,
+            styleInformation: styleInformation,
+            sound: sound != null
+                ? RawResourceAndroidNotificationSound(sound.split(".").first)
+                : null,
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            sound: sound,
+          ),
+        );
   }
 
   static Future<void> showNotification({
@@ -85,6 +88,7 @@ class JackLocalNotificationApi {
     String? bigImagePath,
     DownloadFileType? bigImageType,
     String? soundPath,
+    NotificationDetails? notificationDetails,
   }) async {
     _notifications.show(
       id,
@@ -96,6 +100,7 @@ class JackLocalNotificationApi {
         iconType: largeIconType,
         imageType: bigImageType,
         sound: soundPath,
+        notificationDetails: notificationDetails,
       ),
       payload: payload,
     );
