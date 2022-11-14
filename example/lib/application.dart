@@ -3,9 +3,11 @@ import 'dart:io';
 
 import 'package:example/Z+security/user_provider.dart';
 import 'package:example/Z+security/user_secure_info.dart';
+import 'package:example/home/providers/initialForceRoute.dart';
 import 'package:example/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:jack_components/core_system/local_notification_api/local_notification_api.dart';
+import 'package:jack_components/core_system/network/network_config.dart';
 import 'package:jack_components/ui/loading/loading.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +26,12 @@ class _ApplicationState extends State<Application> {
   void initState() {
     super.initState();
 
+    /// Network Connectivity
+    JackNetworkConfig.initConnectivity();
+
+    /// LocalNotification intialization
+    JackLocalNotificationApi.init();
+
     /// listening clicked LocalNotification
     JackLocalNotificationApi.listenNotifications((event) {
       print(event.payload);
@@ -34,6 +42,9 @@ class _ApplicationState extends State<Application> {
     JackLocalNotificationApi.listenKilledNotifications((event) {
       print(event.notificationResponse?.payload);
       print('listening clicked LocalNotification when app is killed');
+      context
+          .read<ForceRoute>()
+          .updateRoute(event.notificationResponse?.payload);
     });
   }
 

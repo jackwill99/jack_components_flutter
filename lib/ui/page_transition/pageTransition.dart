@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 
 /// Navigator.of(context).push(JackRoute(HomePage(),),),
 ///
-class JackRoute {
+class JackPageTransition {
   final Widget routePage;
 
-  JackRoute({required this.routePage}) {
+  JackPageTransition({required this.routePage}) {
     route(routePage);
   }
 
