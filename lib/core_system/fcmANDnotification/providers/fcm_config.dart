@@ -55,7 +55,7 @@ class JackFCMConfig {
     return _setupToken.stream;
   }
 
-  // It is assumed that all messages contain a data field with the key 'type'
+  /// It is assumed that all messages contain a data field with the key 'type'
   /// call this method in application initial cycle and if initialMessage , do ur actions
   static Future<RemoteMessage?> onMessageTerminatedOpen() async {
     // Get any messages which caused the application to open from

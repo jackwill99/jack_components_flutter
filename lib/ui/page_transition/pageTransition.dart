@@ -1,19 +1,11 @@
 import 'package:flutter/cupertino.dart';
 
-/// Navigator.of(context).push(JackRoute(HomePage(),),),
-///
-class JackPageTransition {
-  final Widget routePage;
-
-  JackPageTransition({required this.routePage}) {
-    route(routePage);
-  }
-
-  static Route<dynamic> route(Widget value) {
-    return CupertinoPageRoute(
+// ignore: non_constant_identifier_names
+Route<dynamic> JackPageTransition(
+    {required Widget widget, RouteSettings? settings}) {
+  return CupertinoPageRoute(
       builder: (BuildContext context) {
-        return value;
+        return widget;
       },
-    );
-  }
+      settings: settings);
 }

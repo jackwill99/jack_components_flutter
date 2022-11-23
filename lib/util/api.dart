@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 class JackApi {
   late String baseUrl;
@@ -23,16 +24,17 @@ class JackApi {
     String? basePath,
     VoidCallback Function(int, int)? onReceiveProgress,
   }) async {
+    _baseDio.options.headers['Content-Type'] = "application/json";
     if (basePath != null) _baseDio.options.baseUrl = basePath;
     if (token != null) {
-      _baseDio.options.headers['Content-Type'] = "application/json";
       _baseDio.options.headers['Authorization'] = "Bearer $token";
     }
     try {
-      final Response<Map> response = await _baseDio.get(
+      final Response response = await _baseDio.get(
         path,
         onReceiveProgress: onReceiveProgress,
       );
+      debugPrint(const JsonEncoder().convert(response.data));
       final responseData = response.data as Map<String, dynamic>;
       return responseData;
     } on DioError catch (e) {
@@ -47,17 +49,18 @@ class JackApi {
     String? basePath,
     void Function(int, int)? onSendProgress,
   }) async {
+    _baseDio.options.headers['Content-Type'] = "application/json";
     if (basePath != null) _baseDio.options.baseUrl = basePath;
     if (token != null) {
-      _baseDio.options.headers['Content-Type'] = "application/json";
       _baseDio.options.headers['Authorization'] = "Bearer $token";
     }
     try {
-      final Response<Map> response = await _baseDio.post(
+      final Response response = await _baseDio.post(
         path,
         data: data,
         onSendProgress: onSendProgress,
       );
+      debugPrint(const JsonEncoder().convert(response.data));
       final responseData = response.data as Map<String, dynamic>;
       return responseData;
     } on DioError catch (e) {

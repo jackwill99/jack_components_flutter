@@ -180,7 +180,7 @@ class _JackCameraState extends State<JackCamera> with WidgetsBindingObserver {
                 Container(
                   height: 55,
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 0, 0, 0),
+                    color: const Color.fromARGB(255, 0, 0, 0),
                     border: Border.all(color: Colors.purple),
                   ),
                   child: Row(

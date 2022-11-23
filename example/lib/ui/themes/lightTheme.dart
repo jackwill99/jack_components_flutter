@@ -8,8 +8,10 @@ class LightTheme {
       scaffoldBackgroundColor: Colors.white,
       primaryColor: const Color.fromRGBO(91, 87, 186, 1),
       textTheme: TextTheme(
+        headlineMedium: const TextStyle(
+            fontSize: 34, fontWeight: FontWeight.w700, letterSpacing: 0.14),
         headlineSmall: TextStyle(
-            fontSize: 34.sp, fontWeight: FontWeight.w700, letterSpacing: 0.14),
+            fontSize: 25.sp, fontWeight: FontWeight.w700, letterSpacing: 0.14),
         titleLarge: TextStyle(
             fontSize: 17.sp, fontWeight: FontWeight.w600, letterSpacing: -0.14),
         titleMedium: TextStyle(
@@ -41,8 +43,6 @@ class LightTheme {
             fontSize: 10, fontWeight: FontWeight.w500, letterSpacing: 0.12),
         headlineLarge: const TextStyle(
             fontSize: 34, fontWeight: FontWeight.w700, letterSpacing: 0.14),
-        headlineMedium: const TextStyle(
-            fontSize: 34, fontWeight: FontWeight.w700, letterSpacing: 0.14),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Color.fromRGBO(251, 211, 81, 1),
@@ -52,7 +52,7 @@ class LightTheme {
         primary: const Color.fromRGBO(91, 87, 186, 1),
         secondary: const Color.fromRGBO(251, 211, 81, 1),
       ),
-      fontFamily: GoogleFonts.roboto().fontFamily,
+      fontFamily: GoogleFonts.manrope().fontFamily,
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
@@ -88,7 +88,7 @@ class LightTheme {
         ),
       ),
       buttonTheme: const ButtonThemeData(
-        height: 32,
+        height: 48,
         buttonColor: Color.fromRGBO(91, 87, 186, 1),
       ),
     );

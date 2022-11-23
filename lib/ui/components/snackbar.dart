@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
 class JackUISnackBar {
-  SnackBar snackBar({
+  static snackBar({
     String? dismiss,
     Function? onDismiss,
     Duration? duration,
     required Icon icon,
     required Text title,
     required Color backgroundColor,
+    required BuildContext context,
   }) {
-    return SnackBar(
+    final snack = SnackBar(
       content: Row(
         children: [
           Padding(
@@ -30,5 +31,8 @@ class JackUISnackBar {
       backgroundColor: backgroundColor,
       behavior: SnackBarBehavior.floating,
     );
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(snack);
   }
 }
