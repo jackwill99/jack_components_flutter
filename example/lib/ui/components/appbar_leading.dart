@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 
-Widget appbarLeadingTitle(
-  BuildContext context,
-  String title,
-  Widget leading,
-) {
+Widget appbarLeadingTitle({
+  required BuildContext context,
+  required String title,
+  required Widget? leading,
+}) {
   return Row(
     children: [
-      leading,
-      Text(
-        title,
-        style: Theme.of(context).textTheme.titleLarge,
+      leading ?? Container(),
+      Padding(
+        padding: EdgeInsets.only(left: leading == null ? 18 : 0),
+        child: Text(
+          title,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
     ],
   );

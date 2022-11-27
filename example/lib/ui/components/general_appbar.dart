@@ -9,15 +9,17 @@ class GeneralAppBar extends StatefulWidget {
   final double toolBarHeight;
   final Widget appBarLeading;
   final Widget? bottom;
+  final Widget? secondAppBar;
+  final double? secondAppBarHeight;
   final double? titleSpacing;
-
-  /// this app bar customize leading,actions and sticky appbar bottom
   const GeneralAppBar({
     Key? key,
     required this.body,
     required this.toolBarHeight,
     required this.appBarLeading,
+    this.secondAppBarHeight,
     this.bottom,
+    this.secondAppBar,
     this.titleSpacing,
   }) : super(key: key);
 
@@ -81,7 +83,6 @@ class _GeneralAppBarState extends State<GeneralAppBar> {
                             child: InkWell(
                               overlayColor:
                                   MaterialStateProperty.all(Colors.transparent),
-                              onTap: () {},
                               child: const Icon(
                                 Icons.qr_code_scanner,
                               ),
@@ -112,6 +113,23 @@ class _GeneralAppBarState extends State<GeneralAppBar> {
                 //   ),
                 // ),
               ),
+              widget.secondAppBar != null
+                  ? SliverAppBar(
+                      automaticallyImplyLeading: false,
+                      pinned: true,
+                      titleSpacing: 0,
+                      toolbarHeight: widget.secondAppBarHeight ?? 43,
+                      primary: false,
+                      elevation: 3,
+                      title: Container(
+                          margin: const EdgeInsets.only(
+                            top: 1.2,
+                          ),
+                          child: widget.secondAppBar),
+                    )
+                  : SliverToBoxAdapter(
+                      child: Container(),
+                    ),
             ];
           },
           body: widget.body,

@@ -2,6 +2,7 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class JackUISliverAppBar extends StatefulWidget {
   final bool increaseDirection;
@@ -153,19 +154,41 @@ class _JackUISliverAppBarState extends State<JackUISliverAppBar> {
           body: widget.body,
         ),
         _buildFad(),
+        Container(
+          margin: const EdgeInsets.only(
+            top: 8,
+            left: 15,
+          ),
+          height: 40,
+          width: 40,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          alignment: Alignment.center,
+          child: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Colors.black,
+            ),
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildFad() {
     /// default position of your desire widget
-    double defaultMargin = _kExpandedHeight;
+    double defaultMargin = _kExpandedHeight - 60;
 
     /// default fade in start point
-    double defaultStart = _kExpandedHeight - 10;
+    double defaultStart = _kExpandedHeight / 2;
 
     /// default fade in end point
-    double defaultEnd = defaultStart / 2;
+    double defaultEnd = _kExpandedHeight;
 
     /// valuenotifier of the widget top position
     ValueNotifier<double> top = ValueNotifier(defaultMargin);
@@ -176,12 +199,14 @@ class _JackUISliverAppBarState extends State<JackUISliverAppBar> {
     if (_scrollController.hasClients) {
       double offset = _scrollController.offset;
       top.value -= offset;
-      if (offset < defaultMargin - defaultStart) {
+      if (offset < defaultStart) {
         scale.value = 1.0;
-      } else if (offset < defaultStart - defaultEnd) {
-        scale.value = (defaultMargin - defaultEnd - offset) / defaultEnd;
       } else {
-        scale.value = 0.0;
+        if (offset > defaultEnd) {
+          scale.value = 0.0;
+        } else {
+          scale.value = 1 - (offset / defaultEnd);
+        }
       }
     }
 
@@ -189,16 +214,53 @@ class _JackUISliverAppBarState extends State<JackUISliverAppBar> {
       builder: (BuildContext context, value, Widget? child) {
         return Positioned(
           top: value,
-          right: 20,
           child: ValueListenableBuilder(
             builder: (BuildContext context, value, Widget? child) {
-              return Transform(
-                alignment: Alignment.center,
-                transform: Matrix4.identity()..scale(value),
-                child: FloatingActionButton(
-                  onPressed: () {},
-                ),
-              );
+              return value <= 0.0
+                  ? Container()
+                  : AnimatedOpacity(
+                      opacity: value,
+                      duration: const Duration(milliseconds: 100),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        color: Colors.transparent,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 25),
+                          child: Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: 15,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('hay'),
+                                    15.verticalSpace,
+                                    const Text('hy'),
+                                    const Text('haad'),
+                                    const Divider(
+                                      thickness: 1,
+                                      color: Colors.black,
+                                    ),
+                                    const Text('2500ks'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
             },
             valueListenable: scale,
           ),

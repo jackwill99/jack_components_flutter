@@ -1,10 +1,10 @@
 # Git Access
 
-- Start the ssh-agent in the background `eval "$(ssh-agent -s)"`
-- `ssh-keygen -t ed25519 -C "your_email@example.com"`
-- First, check to see if your `open ~/.ssh/config` file exists in the default location.If not,
-  create file
-- add these line in this file
+-   Start the ssh-agent in the background `eval "$(ssh-agent -s)"`
+-   `ssh-keygen -t ed25519 -C "your_email@example.com"`
+-   First, check to see if your `open ~/.ssh/config` file exists in the default location.If not,
+    create file
+-   add these line in this file
 
 ```
   Host *.github.com
@@ -14,11 +14,11 @@
      IdentityFile ~/.ssh/id_ed25519
 ```
 
-- if u have error add `IgnoreUnknown UseKeychain`, if not `remove it`
-- add ssh in ur keychain`ssh-add --apple-use-keychain ~/.ssh/id_ed25519`
-- copy ur keychain `nano ~/.ssh/id_ed25519.pub`
-- If it fails, you can run this command to add GitHub to the list of known
-  hosts: `ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts`
+-   if u have error add `IgnoreUnknown UseKeychain`, if not `remove it`
+-   add ssh in ur keychain`ssh-add --apple-use-keychain ~/.ssh/id_ed25519`
+-   copy ur keychain `nano ~/.ssh/id_ed25519.pub`
+-   If it fails, you can run this command to add GitHub to the list of known
+    hosts: `ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts`
 
 ## Mean While
 
@@ -28,24 +28,24 @@
 
 ## for FCM setup
 
-- setup firebase option and check it out with
-  firebaseCLI (https://firebase.google.com/docs/flutter/setup?platform=android)
-- uncomment in main.dart (fcm setup for background) `fcm setup`
-- uncomment in app.dart (For fcm setup) `fcm setup`
+-   setup firebase option and check it out with
+    firebaseCLI (https://firebase.google.com/docs/flutter/setup?platform=android)
+-   uncomment in main.dart (fcm setup for background) `fcm setup`
+-   uncomment in app.dart (For fcm setup) `fcm setup`
 
 ## UserLoginExpiredDate
 
 in app.dart `just temporary test`
 
-- i added some duration for expiredDate in case of testing
-- in actually, it will setup after successfully log in after you setup this expiredDate, remove that
-  code lines
+-   i added some duration for expiredDate in case of testing
+-   in actually, it will setup after successfully log in after you setup this expiredDate, remove that
+    code lines
 
 ## Plugin Config
 
-- Check it plugins in pubspec.yaml and configure your android and ios by documentation of these
-  plugins (
-  eg.FlutterLocalNotification,Firebase,firebase_messaging,flutter_local_notifications,path_provider,)
+-   Check it plugins in pubspec.yaml and configure your android and ios by documentation of these
+    plugins (
+    eg.FlutterLocalNotification,Firebase,firebase_messaging,flutter_local_notifications,path_provider,)
 
 ## flutterNativeSplash and appIcon
 
@@ -53,46 +53,45 @@ In pubspec.yaml file , add these config. `remove_alpha_ios` is for only ios. It 
 
 ```yaml
 flutter_icons:
-  android: true
-  ios: true
-  image_path: "assets/images/zds_app_icon.png"
-  remove_alpha_ios: true
+    android: true
+    ios: true
+    image_path: "assets/images/zds_app_icon.png"
+    remove_alpha_ios: true
 
 flutter_native_splash:
-  color: "#ffffff"
-  image: "assets/images/Zala-Flying.png"
-
+    color: "#ffffff"
+    image: "assets/images/Zala-Flying.png"
 ```
 
 ## for FlutterLocalNotification with Sound
 
 Android
 
-- Create folder `raw` in -> android->app->src->main->res->raw
-- and create your audio file in raw folder
+-   Create folder `raw` in -> android->app->src->main->res->raw
+-   and create your audio file in raw folder
 
 iOS
 
-- open xcode and create 'New Group' by clicking right click with the name of 'Resources'
-- and create your audio file in this folder
+-   open xcode and create 'New Group' by clicking right click with the name of 'Resources'
+-   and create your audio file in this folder
 
 ## For camera widget to use
 
-- At first, in your stateFulWidget, put it `late List<CameraDescription> firstCamera;`
-- Init camera,
+-   At first, in your stateFulWidget, put it `late List<CameraDescription> firstCamera;`
+-   Init camera,
 
-  ```dart
-  Future<void> initCamera() async {
-      // Obtain a list of the available cameras on the device.
-      final cameras = await availableCameras();
+    ```dart
+    Future<void> initCamera() async {
+        // Obtain a list of the available cameras on the device.
+        final cameras = await availableCameras();
 
-      // Get a specific camera from the list of available cameras.
-      firstCamera = cameras;
-  }
-  ```
+        // Get a specific camera from the list of available cameras.
+        firstCamera = cameras;
+    }
+    ```
 
-- and call this function in @initState method
-- and then call JackCamera Widget and it will return uint8base data of image and file path
+-   and call this function in @initState method
+-   and then call JackCamera Widget and it will return uint8base data of image and file path
 
 # To add `Widget` in between the List
 
@@ -128,6 +127,19 @@ borderRadius: BorderRadius.only(
       ? Radius.circular(8)
       : Radius.zero,
 ),
+```
+
+## Lesson's of Sorting bool
+
+```dart
+final aaa = [true,false,false,true,true,true,false,false,true,false];
+aaa.sort((a,b){
+  if(b) {
+    return 1;
+  }
+  return -1;
+});
+print(aaa);
 ```
 
 # If u desire ur appBar by customization of constant height u can use `PreferredSizeWidget` to appBar (first Method) and if u want more check out `sliver_appBar.dart`
@@ -239,6 +251,50 @@ PreferredSizeWidget appBar(BuildContext context) {
 }
 ```
 
+# Event double tap in TabBar
+
+````dart
+int currentIndex = 0;
+void pressedTab(press) {
+    previousPressIndexFunc(press, currentIndex);
+
+    setState(() {
+      currentIndex = press;
+    });
+  }
+
+  /// calculate tabBar double tap
+  /// Jack assume that current is before state change currentIndex
+  /// currentIndex is 0
+  /// press is the user clicked index
+  /// ```
+  /// [press   current ]
+  /// [  0         0   ]
+  /// [  1         0   ]
+  /// [  2         1   ]
+  /// [  2         2   ] -> Jack Assume This Is Double Tab 🫡
+  /// ```
+  void previousPressIndexFunc(press, currentIndex) {
+    if (press == currentIndex) {
+      if (press == 0) {
+        yourController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+      if (press == 1) {
+        yourController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    }
+  }
+
+````
+
 # TODO
 
 in upgrade app u should take async function to fetch the version data. Camera is need to modify and
@@ -247,7 +303,7 @@ update Learn Animation controller
 # Typography
 
 | Sizing | Weight                 | Color        | Notes                                                            |
-|--------|------------------------|--------------|------------------------------------------------------------------|
+| ------ | ---------------------- | ------------ | ---------------------------------------------------------------- |
 | 34     | Bold                   | Black or Any | Page Title Before Scrolled                                       |
 | 17     | Semi bold              | Black or Any | Page AppBar Title after Scrolled                                 |
 | 17     | Medium                 | Black or Any | Important highlight button <br/> bodyTitle,listTitle,dialogTitle |
@@ -259,15 +315,15 @@ update Learn Animation controller
 | 10     | Medium                 | Grey or Any  | Tab bar,Action bar, (Don't go smaller than this)                 |
 |        |                        |              |                                                                  |
 
-- Bold (700)
-- Semi Bold (600)
-- Medium (500)
-- Regular (400)
+-   Bold (700)
+-   Semi Bold (600)
+-   Medium (500)
+-   Regular (400)
 
 `Default line height => 120% - 145%`
 
 | Size | Character Spacing |
-|------|-------------------|
+| ---- | ----------------- |
 | 34   | 0.41              |
 | 17   | -0.41             |
 | 15   | -0.24             |
