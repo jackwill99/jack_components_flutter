@@ -36,6 +36,7 @@ permission_handler=/Users/tensor_lab/Documents/developer/flutter/.pub-cache/host
 permission_handler_android=/Users/tensor_lab/Documents/developer/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler_android-10.2.0/
 permission_handler_apple=/Users/tensor_lab/Documents/developer/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler_apple-9.0.7/
 permission_handler_windows=/Users/tensor_lab/Documents/developer/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler_windows-0.1.2/
+qr_code_scanner=/Users/tensor_lab/Documents/developer/flutter/.pub-cache/hosted/pub.dartlang.org/qr_code_scanner-1.0.1/
 url_launcher=/Users/tensor_lab/Documents/developer/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher-6.1.6/
 url_launcher_android=/Users/tensor_lab/Documents/developer/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_android-6.0.21/
 url_launcher_ios=/Users/tensor_lab/Documents/developer/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_ios-6.0.17/

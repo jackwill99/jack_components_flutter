@@ -4,58 +4,60 @@ version: 0.0.1
 homepage:
 
 environment:
-  sdk: ">=2.18.2 <3.0.0"
-  flutter: ">=1.17.0"
+    sdk: ">=2.18.2 <3.0.0"
+    flutter: ">=1.17.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
+    flutter:
+        sdk: flutter
 
-  # provider
-  provider: ^6.0.3
-  # dio http library
-  dio: ^4.0.6
-  # file to save in device path
-  path_provider: ^2.0.11
-  # uuid
-  uuid: ^3.0.6
-  # responsive
-  flutter_screenutil: ^5.6.0
-  # FCM
-  firebase_core: ^1.22.0
-  firebase_messaging: ^13.0.2
-  # local notification
-  flutter_local_notifications: ^12.0.1
-  rxdart: ^0.27.5
-  # Device Info
-  device_info_plus: ^4.1.2
-  # Network Checking
-  connectivity_plus: ^2.3.7
-  # User Permission
-  permission_handler: ^10.1.0
-  # Secure Storage For AccInfo
-  flutter_secure_storage: ^6.0.0
-  # web view
-  webview_flutter: ^3.0.4
-  # internationalization
-  intl: ^0.17.0
-  # camera
-  camera: ^0.10.0+3
-  # information of the package
-  package_info_plus: ^3.0.1
-  # To compare version string easily
-  pub_semver: ^2.1.2
-  # to launcher another application
-  url_launcher: ^6.1.6
-  # background process
-  #  workmanager: ^0.5.1
-  # modal bottom sheet
-  modal_bottom_sheet: ^2.1.2
+    # provider
+    provider: ^6.0.3
+    # dio http library
+    dio: ^4.0.6
+    # file to save in device path
+    path_provider: ^2.0.11
+    # uuid
+    uuid: ^3.0.6
+    # responsive
+    flutter_screenutil: ^5.6.0
+    # FCM
+    firebase_core: ^1.22.0
+    firebase_messaging: ^13.0.2
+    # local notification
+    flutter_local_notifications: ^12.0.1
+    rxdart: ^0.27.5
+    # Device Info
+    device_info_plus: ^4.1.2
+    # Network Checking
+    connectivity_plus: ^2.3.7
+    # User Permission
+    permission_handler: ^10.1.0
+    # Secure Storage For AccInfo
+    flutter_secure_storage: ^6.0.0
+    # web view
+    webview_flutter: ^3.0.4
+    # internationalization
+    intl: ^0.17.0
+    # camera
+    camera: ^0.10.0+3
+    # information of the package
+    package_info_plus: ^3.0.1
+    # To compare version string easily
+    pub_semver: ^2.1.2
+    # to launcher another application
+    url_launcher: ^6.1.6
+    # background process
+    #  workmanager: ^0.5.1
+    # modal bottom sheet
+    modal_bottom_sheet: ^2.1.2
+    encrypt: ^5.0.1
+    qr_code_scanner: ^1.0.1
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^2.0.0
+    flutter_test:
+        sdk: flutter
+    flutter_lints: ^2.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

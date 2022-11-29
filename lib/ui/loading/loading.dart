@@ -6,8 +6,14 @@ class JackUILoadingSpinner {
   final BuildContext ctx;
   late BuildContext context2;
   final String title;
+  final Color? titleColor;
+  final Color? spinColor;
+  final Color? backgroundColor;
   JackUILoadingSpinner({
     this.title = "",
+    this.backgroundColor,
+    this.titleColor,
+    this.spinColor,
     required this.ctx,
   });
 
@@ -46,7 +52,7 @@ class JackUILoadingSpinner {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(39, 37, 95, 1),
+        color: backgroundColor ?? const Color.fromRGBO(39, 37, 95, 1),
         borderRadius: BorderRadius.circular(12),
       ),
       width: 110,
@@ -55,9 +61,9 @@ class JackUILoadingSpinner {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CupertinoActivityIndicator(
+          CupertinoActivityIndicator(
             radius: 15.0,
-            color: Colors.white,
+            color: spinColor ?? Colors.white,
           ),
           const SizedBox(
             height: 10,
@@ -65,9 +71,9 @@ class JackUILoadingSpinner {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: Colors.white,
+              color: titleColor ?? Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),

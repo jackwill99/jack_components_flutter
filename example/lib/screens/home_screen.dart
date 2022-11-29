@@ -1,7 +1,6 @@
 import 'package:example/home/widgets/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jack_components/core_system/local_notification_api/local_notification_api.dart';
 import 'package:jack_components/jack_components.dart';
 
 class MyHomeScreen extends StatefulWidget {
@@ -25,7 +24,7 @@ class MyHomeScreen extends StatefulWidget {
 class _MyHomeScreenState extends State<MyHomeScreen> {
   final int _counter = 0;
 
-  void _incrementCounter() {
+  void _incrementCounter() async {
     // setState(() {
     //   // This call to setState tells the Flutter framework that something has
     //   // changed in this State, which causes it to rerun the build method below
