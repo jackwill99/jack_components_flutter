@@ -4,21 +4,32 @@ import 'package:flutter/material.dart';
 
 class JackUILoadingSpinner {
   final BuildContext ctx;
-  late BuildContext context2;
   final String title;
   final Color? titleColor;
   final Color? spinColor;
   final Color? backgroundColor;
+  final Color? scaffoldColor;
   JackUILoadingSpinner({
+    required this.ctx,
     this.title = "",
-    this.backgroundColor,
     this.titleColor,
     this.spinColor,
-    required this.ctx,
+    this.backgroundColor,
+    this.scaffoldColor,
   });
 
+  late BuildContext context2;
+  set setContext(BuildContext value) {
+    context2 = value;
+  }
+
+  BuildContext get getContext {
+    return context2;
+  }
+
   void closeLoadingSpinner() {
-    Navigator.of(context2).pop();
+    final ctx = getContext;
+    Navigator.of(ctx).pop();
   }
 
   void showLoadingSpinner() async {
@@ -36,11 +47,12 @@ class JackUILoadingSpinner {
       //   );
       // },
       pageBuilder: (context, animation, secondaryAnimation) {
-        context2 = context;
+        setContext = context;
         return WillPopScope(
           onWillPop: () async => false,
           child: Scaffold(
-            backgroundColor: Colors.transparent,
+            backgroundColor: scaffoldColor,
+            // backgroundColor: Colors.transparent,
             body: Center(child: loadingWidget()),
           ),
         );

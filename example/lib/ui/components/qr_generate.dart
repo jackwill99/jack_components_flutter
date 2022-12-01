@@ -8,9 +8,11 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 class QRGenerate extends StatefulWidget {
   final String data;
+  final double size;
   const QRGenerate({
     Key? key,
     required this.data,
+    required this.size,
   }) : super(key: key);
 
   @override
@@ -52,7 +54,7 @@ class _QRGenerateState extends State<QRGenerate> {
     return QrImage(
       data: encrypted.encrypted.base64,
       gapless: false,
-      size: 250,
+      size: widget.size,
       errorCorrectionLevel: QrErrorCorrectLevel.H,
       embeddedImage: const AssetImage("assets/img/ApplogoYellowicon.png"),
       embeddedImageStyle: QrEmbeddedImageStyle(
