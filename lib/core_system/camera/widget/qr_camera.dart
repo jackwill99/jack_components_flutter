@@ -5,9 +5,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
+
 import 'package:jack_components/core_system/camera/change_to_encrypted.dart';
 import 'package:jack_components/jack_components.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class JackQRScanResult {
   final String scannedValue;
@@ -15,21 +17,27 @@ class JackQRScanResult {
   final String dateString;
   final String code;
   final DateTime date;
+  final DateTime now;
   final bool decrypt;
   final String? normalCode;
+  final String? message;
   JackQRScanResult({
     required this.scannedValue,
     required this.actualValue,
     required this.dateString,
     required this.code,
     required this.date,
+    required this.now,
     required this.decrypt,
     this.normalCode,
+    this.message,
   });
 }
 
 class JackQRCamera extends StatefulWidget {
   final String securePassword;
+  final bool passNTP;
+  final bool networkStatus;
   final Color? borderColor;
   final double? borderWidth;
   final Color? overlayColor;
@@ -40,6 +48,9 @@ class JackQRCamera extends StatefulWidget {
   final Color? resultColor;
   const JackQRCamera({
     Key? key,
+    required this.securePassword,
+    required this.passNTP,
+    required this.networkStatus,
     this.borderColor,
     this.borderWidth,
     this.overlayColor,
@@ -48,7 +59,6 @@ class JackQRCamera extends StatefulWidget {
     this.scanArea,
     this.title,
     this.resultColor,
-    required this.securePassword,
   }) : super(key: key);
 
   @override
@@ -154,18 +164,17 @@ class _JackQRCameraState extends State<JackQRCamera> {
                       Text(
                         result!.dateString.toString(),
                         style: TextStyle(
-                            color: DateTime.now()
-                                        .difference(result!.date)
-                                        .inSeconds >
-                                    15
-                                ? Colors.red
-                                : Colors.green),
+                            color:
+                                result!.now.difference(result!.date).inSeconds >
+                                        15
+                                    ? Colors.red
+                                    : Colors.green),
                       ),
                     ],
                   ),
                 ),
               ),
-            if (result != null && !result!.decrypt)
+            if (result != null && !result!.decrypt && result!.message != null)
               Center(
                 child: Container(
                   margin: const EdgeInsets.only(
@@ -173,8 +182,11 @@ class _JackQRCameraState extends State<JackQRCamera> {
                   ),
                   alignment: Alignment.bottomCenter,
                   child: Text(
-                    result!.normalCode.toString(),
-                    style: const TextStyle(color: Colors.red),
+                    result!.message!,
+                    style: const TextStyle(
+                      color: Colors.red,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               )
@@ -209,39 +221,72 @@ class _JackQRCameraState extends State<JackQRCamera> {
     if (Platform.isAndroid) {
       controller.resumeCamera();
     }
-    controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        if (scanData.code != null) {
-          late JackQRScanResult scanned;
-          try {
-            final actualValue = encryptData
-                .decryptFernet(changeToEncrypted(base64Decode(scanData.code!)));
-            final dateString = actualValue.split("%")[1];
-            final code = actualValue.split("%")[0];
-            final date = DateFormat("yyyy-MM-dd HH:mm:ss").parse(dateString);
-            scanned = JackQRScanResult(
-              scannedValue: scanData.code!,
-              actualValue: actualValue.split("%")[0],
-              dateString: dateString,
-              code: code,
-              date: date,
-              decrypt: true,
-            );
-          } catch (e) {
-            scanned = JackQRScanResult(
-              scannedValue: "",
-              actualValue: "",
-              dateString: "",
-              code: "",
-              date: DateTime.now(),
-              decrypt: false,
-              normalCode: scanData.code,
-            );
-          }
-          result = scanned;
-        }
-      });
+    controller.scannedDataStream.listen((scanData) async {
+      if (scanData.code != null) {
+        final data = await evaluation(scanData);
+        setState(() {
+          result = data;
+        });
+      }
     });
+  }
+
+  Future<JackQRScanResult> evaluation(Barcode scanData) async {
+    try {
+      final actualValue = encryptData
+          .decryptFernet(changeToEncrypted(base64Decode(scanData.code!)));
+      final dateString = actualValue.split("%")[1];
+      final code = actualValue.split("%")[0];
+      final date = DateFormat("yyyy-MM-dd HH:mm:ss").parse(dateString);
+      if (widget.passNTP) {
+        /// passs
+        return JackQRScanResult(
+          scannedValue: scanData.code!,
+          actualValue: actualValue.split("%")[0],
+          dateString: dateString,
+          code: code,
+          date: date,
+          now: DateTime.now(),
+          decrypt: true,
+        );
+      } else if (!widget.passNTP && widget.networkStatus) {
+        /// get ntp
+        final now = await NTP.now();
+        return JackQRScanResult(
+          scannedValue: scanData.code!,
+          actualValue: actualValue.split("%")[0],
+          dateString: dateString,
+          code: code,
+          date: date,
+          now: now,
+          decrypt: true,
+        );
+      } else {
+        /// can't scan ,network required
+        return JackQRScanResult(
+          scannedValue: "",
+          actualValue: "",
+          dateString: "",
+          code: "",
+          date: DateTime.now(),
+          now: DateTime.now(),
+          decrypt: false,
+          normalCode: "Internet Connection Required",
+        );
+      }
+    } catch (e) {
+      return JackQRScanResult(
+        scannedValue: "",
+        actualValue: "",
+        dateString: "",
+        code: "",
+        date: DateTime.now(),
+        now: DateTime.now(),
+        decrypt: false,
+        normalCode: scanData.code,
+        message: "Set time automatically in your settings.",
+      );
+    }
   }
 
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
