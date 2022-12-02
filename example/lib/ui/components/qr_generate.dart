@@ -1,18 +1,24 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:jack_components/security/encrypt%20_data.dart';
+import 'package:jack_components/security/encrypt_decrypt/encrypt%20_data.dart';
+import 'package:ntp/ntp.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QRGenerate extends StatefulWidget {
   final String data;
   final double size;
+  final DateTime initialDate;
+  final bool passNTP;
   const QRGenerate({
     Key? key,
     required this.data,
     required this.size,
+    required this.initialDate,
+    required this.passNTP,
   }) : super(key: key);
 
   @override
@@ -27,18 +33,19 @@ class _QRGenerateState extends State<QRGenerate> {
 
   @override
   void initState() {
+    super.initState();
     encrypted = encryptData.encryptFernet(
-        "${widget.data}%${DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now())}");
+        "${widget.data}%${DateFormat("yyyy-MM-dd HH:mm:ss").format(widget.initialDate)}");
 
     startTimer();
-    super.initState();
   }
 
   void startTimer() {
-    timer = Timer.periodic(const Duration(seconds: 15), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 15), (timer) async {
+      DateTime date = widget.passNTP ? DateTime.now() : await NTP.now();
       setState(() {
         encrypted = encryptData.encryptFernet(
-            "${widget.data}%${DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now())}");
+            "${widget.data}%${DateFormat("yyyy-MM-dd HH:mm:ss").format(date)}");
       });
     });
   }
@@ -58,7 +65,7 @@ class _QRGenerateState extends State<QRGenerate> {
       errorCorrectionLevel: QrErrorCorrectLevel.H,
       embeddedImage: const AssetImage("assets/img/ApplogoYellowicon.png"),
       embeddedImageStyle: QrEmbeddedImageStyle(
-        size: const Size(50, 50),
+        size: const Size(40, 40),
       ),
     );
   }
