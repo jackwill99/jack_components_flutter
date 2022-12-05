@@ -1,3 +1,13 @@
+# Jack Package
+
+# TODO
+
+-   in upgrade app u should take async function to fetch the version data.
+-   Camera is need to modify and update
+-   Learn Animation controller
+-   take paramete in currency format(decimal,)
+-   localnotification schedule
+
 # Git Access
 
 -   Start the ssh-agent in the background `eval "$(ssh-agent -s)"`
@@ -294,11 +304,6 @@ void pressedTab(press) {
   }
 
 ````
-
-# TODO
-
-in upgrade app u should take async function to fetch the version data. Camera is need to modify and
-update Learn Animation controller
 
 # Typography
 

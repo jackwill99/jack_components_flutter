@@ -88,7 +88,7 @@ class _JackQRCameraState extends State<JackQRCamera> {
     // if (Platform.isAndroid) {
     //   controller!.pauseCamera();
     // }
-    controller!.resumeCamera();
+    // controller!.resumeCamera();
   }
 
   @override
@@ -98,43 +98,54 @@ class _JackQRCameraState extends State<JackQRCamera> {
             MediaQuery.of(context).size.height < 400)
         ? 200.0
         : 300.0;
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Flexible(child: _buildQrView(context)),
-            Container(
-              margin: const EdgeInsets.only(
+    return Container(
+      color: Colors.amber,
+      child: SafeArea(
+        child: Scaffold(
+          body: Stack(
+            children: [
+              _buildQrView(context),
+              Positioned(
                 top: 8,
                 left: 15,
-              ),
-              height: 60,
-              width: 60,
-              // decoration: BoxDecoration(
-              //   color: const Color.fromARGB(92, 0, 0, 0),
-              //   borderRadius: BorderRadius.circular(50),
-              // ),
-              alignment: Alignment.center,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: Colors.white,
+                child: Container(
+                  height: 60,
+                  width: 60,
+                  // decoration: BoxDecoration(
+                  //   color: const Color.fromARGB(92, 0, 0, 0),
+                  //   borderRadius: BorderRadius.circular(50),
+                  // ),
+                  alignment: Alignment.center,
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
-            ),
-            Center(
-              child: Container(
-                margin: EdgeInsets.only(bottom: scanArea + 100),
-                child: widget.title ??
-                    const Text('Scan QR code to proceed WOW Point'),
+              Positioned(
+                top: (MediaQuery.of(context).size.height / 2) -
+                    ((scanArea / 2) + (Platform.isAndroid ? 100 : 50)),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  child: widget.title ??
+                      const Text(
+                        'Scan QR code to proceed WOW Point',
+                        textAlign: TextAlign.center,
+                      ),
+                ),
               ),
-            ),
-            Center(
-              child: Container(
-                  margin: EdgeInsets.only(top: scanArea + 150),
+              Positioned(
+                top: (MediaQuery.of(context).size.height / 2) +
+                    ((scanArea / 2) + (Platform.isAndroid ? 50 : 10)),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
                   child: IconButton(
                     onPressed: () async {
                       await controller?.toggleFlash();
@@ -145,52 +156,53 @@ class _JackQRCameraState extends State<JackQRCamera> {
                       size: 30,
                       color: Colors.white,
                     ),
-                  )),
-            ),
-            if (result != null && result!.decrypt)
-              Center(
-                child: Container(
-                  margin: const EdgeInsets.only(
-                    bottom: 50,
-                  ),
-                  alignment: Alignment.bottomCenter,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        result!.code.toString(),
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                      Text(
-                        result!.dateString.toString(),
-                        style: TextStyle(
-                            color:
-                                result!.now.difference(result!.date).inSeconds >
-                                        15
-                                    ? Colors.red
-                                    : Colors.green),
-                      ),
-                    ],
                   ),
                 ),
               ),
-            if (result != null && !result!.decrypt && result!.message != null)
-              Center(
-                child: Container(
-                  margin: const EdgeInsets.only(
-                    bottom: 50,
-                  ),
-                  alignment: Alignment.bottomCenter,
-                  child: Text(
-                    result!.message!,
-                    style: const TextStyle(
-                      color: Colors.red,
+              if (result != null && result!.decrypt)
+                Positioned(
+                  bottom: 50,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.bottomCenter,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          result!.code.toString(),
+                          style: const TextStyle(color: Colors.green),
+                        ),
+                        Text(
+                          result!.dateString.toString(),
+                          style: TextStyle(
+                              color: result!.now
+                                          .difference(result!.date)
+                                          .inSeconds >
+                                      15
+                                  ? Colors.red
+                                  : Colors.green),
+                        ),
+                      ],
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
-              )
-          ],
+              if (result != null && !result!.decrypt)
+                Positioned(
+                  bottom: 50,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.bottomCenter,
+                    child: Text(
+                      result!.normalCode!,
+                      style: const TextStyle(
+                        color: Colors.red,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+            ],
+          ),
         ),
       ),
     );
@@ -214,13 +226,11 @@ class _JackQRCameraState extends State<JackQRCamera> {
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) {
+  void _onQRViewCreated(QRViewController controller) async {
     setState(() {
       this.controller = controller;
     });
-    if (Platform.isAndroid) {
-      controller.resumeCamera();
-    }
+
     controller.scannedDataStream.listen((scanData) async {
       if (scanData.code != null) {
         final data = await evaluation(scanData);
@@ -229,6 +239,9 @@ class _JackQRCameraState extends State<JackQRCamera> {
         });
       }
     });
+    if (Platform.isAndroid) {
+      controller.resumeCamera();
+    }
   }
 
   Future<JackQRScanResult> evaluation(Barcode scanData) async {
@@ -284,7 +297,7 @@ class _JackQRCameraState extends State<JackQRCamera> {
         now: DateTime.now(),
         decrypt: false,
         normalCode: scanData.code,
-        message: "Set time automatically in your settings.",
+        // message: "Set time automatically in your settings.",
       );
     }
   }

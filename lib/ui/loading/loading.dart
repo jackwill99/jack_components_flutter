@@ -51,7 +51,7 @@ class JackUILoadingSpinner {
         return WillPopScope(
           onWillPop: () async => false,
           child: Scaffold(
-            backgroundColor: scaffoldColor,
+            backgroundColor: scaffoldColor ?? Colors.transparent,
             // backgroundColor: Colors.transparent,
             body: Center(child: loadingWidget()),
           ),
