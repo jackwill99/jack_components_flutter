@@ -18,9 +18,16 @@ class JackQRScanResult {
   final String code;
   final DateTime date;
   final DateTime now;
+  final Map data;
   final bool decrypt;
   final String? normalCode;
   final String? message;
+
+  /// ## API
+  /// decrypt -> bool (This is to decide successful or failed qr scanner)
+  /// scannedValue -> is the encrypted base64 code
+  /// code -> is Coupon code
+  /// actualValue -> is the decrypted value
   JackQRScanResult({
     required this.scannedValue,
     required this.actualValue,
@@ -28,6 +35,7 @@ class JackQRScanResult {
     required this.code,
     required this.date,
     required this.now,
+    required this.data,
     required this.decrypt,
     this.normalCode,
     this.message,
@@ -46,6 +54,31 @@ class JackQRCamera extends StatefulWidget {
   final double? scanArea;
   final Text? title;
   final Color? resultColor;
+
+  /// ## API
+  ///
+  /// ```dart
+  ///   Navigator.of(context, rootNavigator: true).push(
+  ///     JackPageTransition(
+  ///       widget: JackQRCamera(
+  ///         networkStatus: network.online,
+  ///         passNTP: network.passNTP,
+  ///         securePassword: "SabanaWOWmeDoublePlusApplication",
+  ///         title: const Text(
+  ///           'Scan QR code to proceed WOW Point',
+  ///           style: TextStyle(
+  ///             color: Colors.white,
+  ///           ),
+  ///         ),
+  ///         resultColor: Colors.white,
+  ///         scanArea: 250,
+  ///       ),
+  ///     ),
+  ///   ).then((value) {
+  ///     final data = value as JackQRScanResult;
+  ///     print(data.data);
+  ///   });
+  /// ```
   const JackQRCamera({
     Key? key,
     required this.securePassword,
@@ -159,48 +192,50 @@ class _JackQRCameraState extends State<JackQRCamera> {
                   ),
                 ),
               ),
-              if (result != null && result!.decrypt)
-                Positioned(
-                  bottom: 50,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.bottomCenter,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          result!.code.toString(),
-                          style: const TextStyle(color: Colors.green),
-                        ),
-                        Text(
-                          result!.dateString.toString(),
-                          style: TextStyle(
-                              color: result!.now
-                                          .difference(result!.date)
-                                          .inSeconds >
-                                      15
-                                  ? Colors.red
-                                  : Colors.green),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              if (result != null && !result!.decrypt)
-                Positioned(
-                  bottom: 50,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.bottomCenter,
-                    child: Text(
-                      result!.normalCode!,
-                      style: const TextStyle(
-                        color: Colors.red,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                )
+
+              /// this is to visual check out
+              // if (result != null && result!.decrypt)
+              //   Positioned(
+              //     bottom: 50,
+              //     child: Container(
+              //       width: MediaQuery.of(context).size.width,
+              //       alignment: Alignment.bottomCenter,
+              //       child: Column(
+              //         mainAxisSize: MainAxisSize.min,
+              //         children: [
+              //           Text(
+              //             result!.code.toString(),
+              //             style: const TextStyle(color: Colors.green),
+              //           ),
+              //           Text(
+              //             result!.dateString.toString(),
+              //             style: TextStyle(
+              //                 color: result!.now
+              //                             .difference(result!.date)
+              //                             .inSeconds >
+              //                         15
+              //                     ? Colors.red
+              //                     : Colors.green),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // if (result != null && !result!.decrypt)
+              //   Positioned(
+              //     bottom: 50,
+              //     child: Container(
+              //       width: MediaQuery.of(context).size.width,
+              //       alignment: Alignment.bottomCenter,
+              //       child: Text(
+              //         result!.normalCode!,
+              //         style: const TextStyle(
+              //           color: Colors.red,
+              //         ),
+              //         textAlign: TextAlign.center,
+              //       ),
+              //     ),
+              //   )
             ],
           ),
         ),
@@ -213,7 +248,7 @@ class _JackQRCameraState extends State<JackQRCamera> {
     // we need to listen for Flutter SizeChanged notification and update controller
     return QRView(
       key: qrKey,
-      onQRViewCreated: _onQRViewCreated,
+      onQRViewCreated: (controller) => _onQRViewCreated(controller, context),
       overlay: QrScannerOverlayShape(
         overlayColor: widget.overlayColor ?? const Color.fromRGBO(0, 0, 0, 80),
         borderColor: widget.borderColor ?? Colors.purple,
@@ -226,7 +261,8 @@ class _JackQRCameraState extends State<JackQRCamera> {
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) async {
+  void _onQRViewCreated(
+      QRViewController controller, BuildContext context) async {
     setState(() {
       this.controller = controller;
     });
@@ -234,9 +270,14 @@ class _JackQRCameraState extends State<JackQRCamera> {
     controller.scannedDataStream.listen((scanData) async {
       if (scanData.code != null) {
         final data = await evaluation(scanData);
-        setState(() {
-          result = data;
-        });
+        controller.pauseCamera();
+        controller.dispose();
+        controller.stopCamera();
+        if (!mounted) return;
+        Navigator.of(context).pop(data);
+        // setState(() {
+        //   result = data;
+        // });
       }
     });
     if (Platform.isAndroid) {
@@ -248,8 +289,9 @@ class _JackQRCameraState extends State<JackQRCamera> {
     try {
       final actualValue = encryptData
           .decryptFernet(changeToEncrypted(base64Decode(scanData.code!)));
-      final dateString = actualValue.split("%")[1];
       final code = actualValue.split("%")[0];
+      final dateString = actualValue.split("%")[1];
+      final data = jsonDecode(actualValue.split("%")[2]);
       final date = DateFormat("yyyy-MM-dd HH:mm:ss").parse(dateString);
       if (widget.passNTP) {
         /// passs
@@ -259,6 +301,7 @@ class _JackQRCameraState extends State<JackQRCamera> {
           dateString: dateString,
           code: code,
           date: date,
+          data: data,
           now: DateTime.now(),
           decrypt: true,
         );
@@ -272,6 +315,7 @@ class _JackQRCameraState extends State<JackQRCamera> {
           code: code,
           date: date,
           now: now,
+          data: data,
           decrypt: true,
         );
       } else {
@@ -281,6 +325,7 @@ class _JackQRCameraState extends State<JackQRCamera> {
           actualValue: "",
           dateString: "",
           code: "",
+          data: {},
           date: DateTime.now(),
           now: DateTime.now(),
           decrypt: false,
@@ -296,6 +341,7 @@ class _JackQRCameraState extends State<JackQRCamera> {
         date: DateTime.now(),
         now: DateTime.now(),
         decrypt: false,
+        data: {},
         normalCode: scanData.code,
         // message: "Set time automatically in your settings.",
       );
@@ -317,7 +363,6 @@ class _JackQRCameraState extends State<JackQRCamera> {
     super.dispose();
   }
 }
-
 
 // Expanded(
 //               flex: 1,
@@ -400,4 +445,3 @@ class _JackQRCameraState extends State<JackQRCamera> {
 //                 ),
 //               ),
 //             )
-          

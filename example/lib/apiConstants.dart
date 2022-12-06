@@ -7,6 +7,7 @@ class ApiConstants {
   /// api
   static JackApi api() => JackApi(
         baseUrl: base,
+        logoutFunc: () {},
         connectTimeout: 6000,
         receiveTimeout: 6000,
       );

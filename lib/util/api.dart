@@ -8,7 +8,13 @@ class JackApi {
   //  const baseUrl = "";
   late Dio _baseDio;
 
-  JackApi({required this.baseUrl, int? connectTimeout, int? receiveTimeout}) {
+  late VoidCallback logoutFunc;
+
+  JackApi(
+      {required this.baseUrl,
+      required this.logoutFunc,
+      int? connectTimeout,
+      int? receiveTimeout}) {
     _baseDio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
@@ -36,6 +42,9 @@ class JackApi {
       );
       debugPrint(const JsonEncoder().convert(response.data));
       final responseData = response.data as Map<String, dynamic>;
+      if (!responseData['authorized']) {
+        logoutFunc();
+      }
       return responseData;
     } on DioError catch (e) {
       return e;
@@ -62,6 +71,9 @@ class JackApi {
       );
       debugPrint(const JsonEncoder().convert(response.data));
       final responseData = response.data as Map<String, dynamic>;
+      if (!responseData['authorized']) {
+        logoutFunc();
+      }
       return responseData;
     } on DioError catch (e) {
       print(e);
