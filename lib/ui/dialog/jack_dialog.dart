@@ -10,29 +10,21 @@ class Consts {
 }
 
 class JackUIDialog extends StatelessWidget {
-  final String? confirmText, undoText;
   final Text? title, description;
-  final Function? confirmFunc, undoFunc;
-  final Icon? icon;
-  final Color? iconBackgroundColor;
+  final Widget? icon;
   final Widget? topImage;
   final Widget? body;
-  final double? fontSize;
+  final Widget? button;
 
-  const JackUIDialog(
-      {Key? key,
-      this.undoText,
-      this.undoFunc,
-      this.icon,
-      this.iconBackgroundColor,
-      this.confirmFunc,
-      this.confirmText,
-      this.description,
-      this.title,
-      this.topImage,
-      this.body,
-      this.fontSize})
-      : super(key: key);
+  const JackUIDialog({
+    Key? key,
+    this.icon,
+    this.description,
+    this.title,
+    this.topImage,
+    this.body,
+    this.button,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -68,104 +60,27 @@ class JackUIDialog extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min, // To make the card compact
               children: <Widget>[
-                topImage != null
-                    ? Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: topImage!,
-                      )
-                    : Container(),
-                title != null
-                    ? title! // fontSize: 24.0,fontWeight: FontWeight.w700, height: 1.1,
-                    : Container(),
-                16.verticalSpace,
-                description != null
-                    ? description! // fontSize: 16.0,height: 1.2,
-                    : Container(),
-                24.verticalSpace,
-                body != null
-                    ? body! // fontSize: 16.0,height: 1.2,
-                    : Container(),
-                24.verticalSpace,
-                Row(
-                  mainAxisAlignment: undoText != null && confirmText != null
-                      ? MainAxisAlignment.spaceBetween
-                      : MainAxisAlignment.center,
-                  children: [
-                    undoText != null
-                        ? TextButton(
-                            onPressed: () {
-                              // To close the dialog
-                              // Navigator.of(context).pop(false);
-                              undoFunc!();
-                            },
-                            style: ButtonStyle(
-                              overlayColor: MaterialStateProperty.all(
-                                Colors.white,
-                              ),
-                              side: MaterialStateProperty.all(
-                                const BorderSide(
-                                    width: 2,
-                                    color: Color.fromRGBO(39, 37, 95, 1)),
-                              ),
-                              padding: MaterialStateProperty.all(
-                                const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 10),
-                              ),
-                            ),
-                            child: Text(
-                              undoText!,
-                              style: TextStyle(
-                                  fontSize: fontSize ?? 18,
-                                  color: const Color.fromRGBO(39, 37, 95, 1),
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        : Container(),
-                    confirmText != null
-                        ? TextButton(
-                            onPressed: () {
-                              // To close the dialog
-                              // Navigator.of(context).pop(true);
-                              confirmFunc!();
-                            },
-                            style: ButtonStyle(
-                              overlayColor: MaterialStateProperty.all(
-                                Colors.white,
-                              ),
-                              side: MaterialStateProperty.all(
-                                const BorderSide(
-                                    width: 2,
-                                    color: Color.fromRGBO(39, 37, 95, 1)),
-                              ),
-                              padding: MaterialStateProperty.all(
-                                const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 10),
-                              ),
-                            ),
-                            child: Text(
-                              confirmText!,
-                              style: TextStyle(
-                                  fontSize: fontSize ?? 18,
-                                  color: const Color.fromRGBO(39, 37, 95, 1),
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        : Container(),
-                  ],
-                )
+                if (topImage != null) topImage!,
+                if (title != null)
+                  title! // fontSize: 24.0,fontWeight: FontWeight.w700, height: 1.1,
+                ,
+                8.verticalSpace,
+                if (description != null)
+                  description! // fontSize: 16.0,height: 1.2,
+                ,
+                if (body != null) 30.verticalSpace,
+                if (body != null) body! // fontSize: 16.0,height: 1.2,
+                ,
+                30.verticalSpace,
+                if (button != null) button!,
+                20.verticalSpace,
               ],
             ),
           ),
           Positioned(
             left: Consts.padding,
             right: Consts.padding,
-            child: icon != null
-                ? CircleAvatar(
-                    backgroundColor: iconBackgroundColor ?? Colors.blueAccent,
-                    radius: Consts.avatarRadius,
-                    child: icon,
-                  )
-                : Container(),
+            child: icon != null ? icon! : Container(),
           )
         ],
       ),
