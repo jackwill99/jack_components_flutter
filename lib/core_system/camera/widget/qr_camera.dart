@@ -160,19 +160,19 @@ class _JackQRCameraState extends State<JackQRCamera> {
                   ),
                 ),
               ),
-              Positioned(
-                top: (MediaQuery.of(context).size.height / 2) -
-                    ((scanArea / 2) + (Platform.isAndroid ? 100 : 50)),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  alignment: Alignment.center,
-                  child: widget.title ??
-                      const Text(
-                        'Scan QR code to proceed WOW Point',
-                        textAlign: TextAlign.center,
-                      ),
-                ),
-              ),
+              // Positioned(
+              //   top: (MediaQuery.of(context).size.height / 2) -
+              //       ((scanArea / 2) + (Platform.isAndroid ? 100 : 50)),
+              //   child: Container(
+              //     width: MediaQuery.of(context).size.width,
+              //     alignment: Alignment.center,
+              //     child: widget.title ??
+              //         const Text(
+              //           'Scan QR code to proceed WOW Point',
+              //           textAlign: TextAlign.center,
+              //         ),
+              //   ),
+              // ),
               Positioned(
                 top: (MediaQuery.of(context).size.height / 2) +
                     ((scanArea / 2) + (Platform.isAndroid ? 50 : 10)),
