@@ -32,22 +32,22 @@ class ImageCollage extends StatelessWidget {
       "count": 1,
       'axisCount': 6,
       "pattern": [
-        [6, 3],
+        [6, 6],
       ]
     },
     {
       "count": 2,
       'axisCount': 6,
       "pattern": [
-        [3, 3],
-        [3, 3],
+        [3, 4],
+        [3, 4],
       ]
     },
     {
       "count": 3,
       'axisCount': 6,
       "pattern": [
-        [3, 6],
+        [6, 3],
         [3, 3],
         [3, 3],
       ]
@@ -57,17 +57,17 @@ class ImageCollage extends StatelessWidget {
       'axisCount': 6,
       "pattern": [
         [6, 3],
-        [2, 2],
-        [2, 2],
-        [2, 2],
+        [2, 3],
+        [2, 3],
+        [2, 3],
       ]
     },
     {
       "count": 5,
       'axisCount': 6,
       "pattern": [
-        [3, 3],
-        [3, 3],
+        [3, 4],
+        [3, 4],
         [2, 2],
         [2, 2],
         [2, 2],

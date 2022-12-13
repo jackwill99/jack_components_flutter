@@ -5,10 +5,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:jack_components/util/cryptojs_encryption_decryption.dart';
 import 'package:ntp/ntp.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-import 'package:jack_components/core_system/camera/change_to_encrypted.dart';
+import 'package:jack_components/util/change_to_encrypted.dart';
 import 'package:jack_components/jack_components.dart';
 
 class JackQRScanResult {
@@ -333,18 +334,35 @@ class _JackQRCameraState extends State<JackQRCamera> {
         );
       }
     } catch (e) {
-      return JackQRScanResult(
-        scannedValue: "",
-        actualValue: "",
-        dateString: "",
-        code: "",
-        date: DateTime.now(),
-        now: DateTime.now(),
-        decrypt: false,
-        data: {},
-        normalCode: scanData.code,
-        // message: "Set time automatically in your settings.",
-      );
+      try {
+        final actualValue =
+            decryptAESCryptoJS(scanData.code!, widget.securePassword);
+        final data = jsonDecode(actualValue);
+        return JackQRScanResult(
+          scannedValue: actualValue,
+          actualValue: actualValue,
+          dateString: "",
+          code: actualValue,
+          date: DateTime.now(),
+          now: DateTime.now(),
+          decrypt: true,
+          data: data,
+          // message: "Set time automatically in your settings.",
+        );
+      } catch (e) {
+        return JackQRScanResult(
+          scannedValue: "",
+          actualValue: "",
+          dateString: "",
+          code: "",
+          date: DateTime.now(),
+          now: DateTime.now(),
+          decrypt: false,
+          data: {},
+          normalCode: scanData.code,
+          // message: "Set time automatically in your settings.",
+        );
+      }
     }
   }
 
