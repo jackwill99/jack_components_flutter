@@ -12,7 +12,7 @@ import 'package:jack_components/jack_components.dart';
 
 class JackQRScanResult {
   final String scannedValue;
-  final String actualValue;
+  final Map<String, dynamic> actualValue;
 
   final bool decrypt;
 
@@ -293,7 +293,7 @@ class _JackQRCameraState extends State<JackQRCamera> {
         /// can't scan ,network required
         return JackQRScanResult(
           scannedValue: scanData.code!,
-          actualValue: "",
+          actualValue: {},
           decrypt: false,
         );
       }
@@ -311,7 +311,7 @@ class _JackQRCameraState extends State<JackQRCamera> {
       } catch (e) {
         return JackQRScanResult(
           scannedValue: scanData.code!,
-          actualValue: "",
+          actualValue: {},
           decrypt: false,
           // message: "Set time automatically in your settings.",
         );
