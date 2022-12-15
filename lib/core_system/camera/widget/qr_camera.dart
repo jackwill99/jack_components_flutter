@@ -4,9 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:jack_components/util/cryptojs_encryption_decryption.dart';
-import 'package:ntp/ntp.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import 'package:jack_components/util/change_to_encrypted.dart';
@@ -15,14 +13,8 @@ import 'package:jack_components/jack_components.dart';
 class JackQRScanResult {
   final String scannedValue;
   final String actualValue;
-  final String dateString;
-  final String code;
-  final DateTime date;
-  final DateTime now;
-  final Map data;
+
   final bool decrypt;
-  final String? normalCode;
-  final String? message;
 
   /// ## API
   /// decrypt -> bool (This is to decide successful or failed qr scanner)
@@ -32,14 +24,7 @@ class JackQRScanResult {
   JackQRScanResult({
     required this.scannedValue,
     required this.actualValue,
-    required this.dateString,
-    required this.code,
-    required this.date,
-    required this.now,
-    required this.data,
     required this.decrypt,
-    this.normalCode,
-    this.message,
   });
 }
 
@@ -290,47 +275,26 @@ class _JackQRCameraState extends State<JackQRCamera> {
     try {
       final actualValue = encryptData
           .decryptFernet(changeToEncrypted(base64Decode(scanData.code!)));
-      final code = actualValue.split("%")[0];
-      final dateString = actualValue.split("%")[1];
-      final data = jsonDecode(actualValue.split("%")[2]);
-      final date = DateFormat("yyyy-MM-dd HH:mm:ss").parse(dateString);
+      final decode = jsonDecode(actualValue);
       if (widget.passNTP) {
         /// passs
         return JackQRScanResult(
           scannedValue: scanData.code!,
-          actualValue: actualValue.split("%")[0],
-          dateString: dateString,
-          code: code,
-          date: date,
-          data: data,
-          now: DateTime.now(),
+          actualValue: decode,
           decrypt: true,
         );
       } else if (!widget.passNTP && widget.networkStatus) {
-        /// get ntp
-        final now = await NTP.now();
         return JackQRScanResult(
           scannedValue: scanData.code!,
-          actualValue: actualValue.split("%")[0],
-          dateString: dateString,
-          code: code,
-          date: date,
-          now: now,
-          data: data,
+          actualValue: decode,
           decrypt: true,
         );
       } else {
         /// can't scan ,network required
         return JackQRScanResult(
-          scannedValue: "",
+          scannedValue: scanData.code!,
           actualValue: "",
-          dateString: "",
-          code: "",
-          data: {},
-          date: DateTime.now(),
-          now: DateTime.now(),
           decrypt: false,
-          normalCode: "Internet Connection Required",
         );
       }
     } catch (e) {
@@ -339,27 +303,16 @@ class _JackQRCameraState extends State<JackQRCamera> {
             decryptAESCryptoJS(scanData.code!, widget.securePassword);
         final data = jsonDecode(actualValue);
         return JackQRScanResult(
-          scannedValue: actualValue,
-          actualValue: actualValue,
-          dateString: "",
-          code: actualValue,
-          date: DateTime.now(),
-          now: DateTime.now(),
+          scannedValue: scanData.code!,
+          actualValue: data,
           decrypt: true,
-          data: data,
           // message: "Set time automatically in your settings.",
         );
       } catch (e) {
         return JackQRScanResult(
-          scannedValue: "",
+          scannedValue: scanData.code!,
           actualValue: "",
-          dateString: "",
-          code: "",
-          date: DateTime.now(),
-          now: DateTime.now(),
           decrypt: false,
-          data: {},
-          normalCode: scanData.code,
           // message: "Set time automatically in your settings.",
         );
       }
