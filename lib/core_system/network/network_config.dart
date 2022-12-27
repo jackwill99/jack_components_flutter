@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/subjects.dart';
 
@@ -14,9 +15,11 @@ class JackNetworkConfig {
   static void _updateNetworkSubscription() {
     connectivitySubscription =
         Connectivity().onConnectivityChanged.listen((event) {
-      print("_updateNetworkSubscription");
+      debugPrint("_updateNetworkSubscription");
       _controller.add(event);
-      _updateConnectionStatus(event);
+
+      ///* I assume that will not need
+      // _updateConnectionStatus(event);
     });
   }
 
@@ -36,7 +39,7 @@ class JackNetworkConfig {
       return;
     }
     _updateNetworkSubscription();
-    print('network config done');
+    debugPrint('network config done');
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling

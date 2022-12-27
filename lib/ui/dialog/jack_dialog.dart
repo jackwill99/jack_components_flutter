@@ -58,6 +58,7 @@ class JackUIDialog extends StatelessWidget {
               ],
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min, // To make the card compact
               children: <Widget>[
                 if (topImage != null) topImage!,

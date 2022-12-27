@@ -17,8 +17,9 @@ class JackFCMConfig {
   // final setupToken = Provider.of<JackFCMToken>(context, listen: false);
   final BehaviorSubject<String?> _setupToken = BehaviorSubject<String?>();
 
-  Future<void> firebaseSetup({required String vapidKey}) async {
-    requestPermission();
+  Future<String?> firebaseSetup({required String vapidKey}) async {
+    await requestPermission();
+    String? token;
 
     if (!kIsWeb) {
       /// Local Notification setup
@@ -27,8 +28,10 @@ class JackFCMConfig {
 
     FirebaseMessaging.instance.getToken(vapidKey: vapidKey).then(
       (value) {
-        print("----------------------token----------------------");
-        _setupToken.add(value);
+        debugPrint("----------------------token----------------------");
+        debugPrint(value);
+        token = value;
+        // _setupToken.add(value);
         // setupToken.addToken(value);
       },
     );
@@ -49,11 +52,13 @@ class JackFCMConfig {
       //   message,
       // );
     });
+
+    return token;
   }
 
-  ValueStream<String?> get onToken {
-    return _setupToken.stream;
-  }
+  // ValueStream<String?> get onToken {
+  //   return _setupToken.stream;
+  // }
 
   /// It is assumed that all messages contain a data field with the key 'type'
   /// call this method in application initial cycle and if initialMessage , do ur actions

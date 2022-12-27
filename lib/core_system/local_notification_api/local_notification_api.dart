@@ -34,7 +34,6 @@ class JackLocalNotificationApi {
     String? imagePath,
     DownloadFileType? imageType,
     String? sound,
-    NotificationDetails? notificationDetails,
   }) async {
     /// local notification with Icon and Image
     final largeIconPath = iconPath != null && iconPath.startsWith("http")
@@ -58,10 +57,9 @@ class JackLocalNotificationApi {
 
     return NotificationDetails(
       android: AndroidNotificationDetails(
-        'max_importance_channel', // id
-        'Max Importance Notifications', // title
-        channelDescription:
-            'This channel is used for important channel notifications.',
+        'high_importance_channel', // id
+        'High Importance Notifications', // title
+        channelDescription: 'This channel is used for important notifications.',
         // description
         importance: Importance.max,
         styleInformation: styleInformation,
@@ -87,7 +85,6 @@ class JackLocalNotificationApi {
     String? bigImagePath,
     DownloadFileType? bigImageType,
     String? soundPath,
-    NotificationDetails? notificationDetails,
   }) async {
     _notifications.show(
       id,
@@ -99,7 +96,6 @@ class JackLocalNotificationApi {
         iconType: largeIconType,
         imageType: bigImageType,
         sound: soundPath,
-        notificationDetails: notificationDetails,
       ),
       payload: payload,
     );
