@@ -27,8 +27,6 @@ dependencies:
     # local notification
     flutter_local_notifications: ^12.0.1
     rxdart: ^0.27.5
-    # Device Info
-    device_info_plus: ^4.1.2
     # Network Checking
     connectivity_plus: ^2.3.7
     # User Permission
@@ -56,7 +54,7 @@ dependencies:
     scan: ^1.6.0
     tuple: ^2.0.1
     crypto: ^3.0.2
-    # image_cropper: ^3.0.0
+    image_cropper: ^3.0.0
     image_picker: ^0.8.6
 
 dev_dependencies:

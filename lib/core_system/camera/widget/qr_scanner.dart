@@ -1,13 +1,17 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jack_components/util/cryptojs_encryption_decryption.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:scan/scan.dart';
-import 'package:jack_components/util/change_to_encrypted.dart';
+
 import 'package:jack_components/jack_components.dart';
+import 'package:jack_components/util/change_to_encrypted.dart';
+import 'package:jack_components/util/cryptojs_encryption_decryption.dart';
 
 class JackQRScanResult {
   final String scannedValue;
@@ -30,6 +34,10 @@ class JackQRCamera extends StatefulWidget {
   final String securePassword;
   final bool passNTP;
   final bool networkStatus;
+  final VoidCallback? permissionModel;
+
+  /// is u want to show image picker, u must need permissionModel
+  final bool showImagePicker;
   final Color? overlayColor;
 
   /// custom scan area, if set to 1.0, will scan full area
@@ -37,6 +45,8 @@ class JackQRCamera extends StatefulWidget {
   final Text? title;
 
   /// ## API
+  ///
+  /// is u want to show image picker, u must need permissionModel
   ///
   /// ```dart
   ///   Navigator.of(context, rootNavigator: true).push(
@@ -64,6 +74,8 @@ class JackQRCamera extends StatefulWidget {
     required this.securePassword,
     required this.passNTP,
     required this.networkStatus,
+    this.permissionModel,
+    required this.showImagePicker,
     this.overlayColor,
     this.scanArea,
     this.title,
@@ -144,28 +156,37 @@ class _JackQRCameraState extends State<JackQRCamera> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    height: 50,
-                    width: 50,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: Colors.white),
-                    child: IconButton(
-                      onPressed: () async {
-                        final data = await _getImage();
-                        if (data == null) return;
-                        controller.pause();
-                        if (!mounted) return;
-                        Navigator.of(context).pop(data);
-                      },
-                      icon: const Icon(
-                        CupertinoIcons.photo_fill_on_rectangle_fill,
-                        size: 25,
+                  if (widget.showImagePicker)
+                    Container(
+                      height: 50,
+                      width: 50,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.white),
+                      child: IconButton(
+                        onPressed: () async {
+                          final photoRequest = Platform.isIOS
+                              ? await Permission.photos.request()
+                              : await Permission.storage.request();
+                          if (photoRequest.isDenied) return;
+                          if (photoRequest.isPermanentlyDenied) {
+                            widget.permissionModel?.call();
+                          } else {
+                            final data = await _getImage();
+                            if (data == null) return;
+                            controller.pause();
+                            if (!mounted) return;
+                            Navigator.of(context).pop(data);
+                          }
+                        },
+                        icon: const Icon(
+                          CupertinoIcons.photo_fill_on_rectangle_fill,
+                          size: 25,
+                        ),
                       ),
                     ),
-                  ),
-                  20.horizontalSpace,
+                  if (widget.showImagePicker) 20.horizontalSpace,
                   Container(
                     height: 50,
                     width: 50,
