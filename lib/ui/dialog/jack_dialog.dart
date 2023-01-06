@@ -62,17 +62,18 @@ class JackUIDialog extends StatelessWidget {
               mainAxisSize: MainAxisSize.min, // To make the card compact
               children: <Widget>[
                 if (topImage != null) topImage!,
+                const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                 if (title != null)
                   title! // fontSize: 24.0,fontWeight: FontWeight.w700, height: 1.1,
                 ,
-                8.verticalSpace,
+                15.verticalSpace,
                 if (description != null)
                   description! // fontSize: 16.0,height: 1.2,
                 ,
                 if (body != null) 30.verticalSpace,
                 if (body != null) body! // fontSize: 16.0,height: 1.2,
                 ,
-                30.verticalSpace,
+                20.verticalSpace,
                 if (button != null) button!,
                 20.verticalSpace,
               ],

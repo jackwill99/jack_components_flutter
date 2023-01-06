@@ -5,7 +5,7 @@ enum JackCardType {
   Discover,
   AmericanExpress,
   DinersClub,
-  Jcb,
+  JCB,
   Others,
   Invalid
 }

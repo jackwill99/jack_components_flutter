@@ -148,7 +148,7 @@ class JackCardUtils {
       case JackCardType.DinersClub:
         img = 'dinners_club.png';
         break;
-      case JackCardType.Jcb:
+      case JackCardType.JCB:
         img = 'jcb.png';
         break;
       case JackCardType.Others:
@@ -227,7 +227,7 @@ class JackCardUtils {
     } else if (input.startsWith(RegExp(r'((30[0-5])|(3[89])|(36)|(3095))'))) {
       cardType = JackCardType.DinersClub;
     } else if (input.startsWith(RegExp(r'(352[89]|35[3-8][0-9])'))) {
-      cardType = JackCardType.Jcb;
+      cardType = JackCardType.JCB;
     } else if (input.length <= 8) {
       cardType = JackCardType.Others;
     } else {

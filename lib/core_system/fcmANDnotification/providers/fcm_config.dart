@@ -26,7 +26,7 @@ class JackFCMConfig {
       await JackFCMNotificationConfig.setupFlutterNotifications();
     }
 
-    FirebaseMessaging.instance.getToken(vapidKey: vapidKey).then(
+    await FirebaseMessaging.instance.getToken(vapidKey: vapidKey).then(
       (value) {
         debugPrint("----------------------token----------------------");
         debugPrint(value);
