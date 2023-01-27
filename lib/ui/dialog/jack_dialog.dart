@@ -15,6 +15,7 @@ class JackUIDialog extends StatelessWidget {
   final Widget? topImage;
   final Widget? body;
   final Widget? button;
+  final Widget? bottomSpacing;
 
   const JackUIDialog({
     Key? key,
@@ -24,6 +25,7 @@ class JackUIDialog extends StatelessWidget {
     this.topImage,
     this.body,
     this.button,
+    this.bottomSpacing,
   }) : super(key: key);
 
   @override
@@ -75,7 +77,7 @@ class JackUIDialog extends StatelessWidget {
                 ,
                 20.verticalSpace,
                 if (button != null) button!,
-                20.verticalSpace,
+                bottomSpacing ?? 10.verticalSpace,
               ],
             ),
           ),

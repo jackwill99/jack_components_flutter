@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -110,7 +111,7 @@ class _JackQRCameraState extends State<JackQRCamera> {
             scanAreaScale: widget.scanArea ?? .7,
             scanLineColor: widget.overlayColor ?? Colors.green.shade400,
             onCapture: (qrValue) async {
-              final data = await evaluation(qrValue);
+              final data = await evaluation(qrValue, true);
               controller.pause();
               if (!mounted) return;
               Navigator.of(context).pop(data);
@@ -258,33 +259,80 @@ class _JackQRCameraState extends State<JackQRCamera> {
     );
   }
 
-  Future<JackQRScanResult> evaluation(String scanData) async {
+  Future<JackQRScanResult> evaluation(String scanData, bool checkNTP) async {
     try {
+      debugPrint("----------------------start decode----------------------");
       final actualValue =
           encryptData.decryptFernet(changeToEncrypted(base64Decode(scanData)));
       final decode = jsonDecode(actualValue);
-      if (widget.passNTP) {
-        /// passs
-        return JackQRScanResult(
-          scannedValue: scanData,
-          actualValue: decode,
-          decrypt: true,
-        );
-      } else if (!widget.passNTP && widget.networkStatus) {
-        return JackQRScanResult(
-          scannedValue: scanData,
-          actualValue: decode,
-          decrypt: true,
-        );
+      debugPrint("----------------------decode success----------------------");
+      if (checkNTP) {
+        debugPrint("----------------------checkNTP true----------------------");
+        var now = await NTPApi.getNtp(context);
+        if (now == null) {
+          debugPrint("----------------------now is null----------------------");
+          return JackQRScanResult(
+            scannedValue: scanData,
+            actualValue: {},
+            decrypt: false,
+            // message: "Set time automatically in your settings.",
+          );
+        }
+
+        final dateTimeNow = DateTime.parse(now);
+        final previousData = DateTime.parse(decode['date']);
+
+        if (dateTimeNow.difference(previousData).inSeconds > 15) {
+          debugPrint(
+              "----------------------difference is lower than 15----------------------");
+          return JackQRScanResult(
+            scannedValue: scanData,
+            actualValue: {},
+            decrypt: false,
+            // message: "Set time automatically in your settings.",
+          );
+        } else {
+          debugPrint("----------------------pass----------------------");
+          return JackQRScanResult(
+            scannedValue: scanData,
+            actualValue: decode,
+            decrypt: true,
+          );
+        }
       } else {
-        /// can't scan ,network required
+        debugPrint(
+            "----------------------checkNTP false----------------------");
         return JackQRScanResult(
           scannedValue: scanData,
-          actualValue: {},
-          decrypt: false,
+          actualValue: decode,
+          decrypt: true,
         );
       }
+
+      // if (widget.passNTP) {
+      //   /// passs
+      //   return JackQRScanResult(
+      //     scannedValue: scanData,
+      //     actualValue: decode,
+      //     decrypt: true,
+      //   );
+      // } else if (!widget.passNTP && widget.networkStatus) {
+      //   return JackQRScanResult(
+      //     scannedValue: scanData,
+      //     actualValue: decode,
+      //     decrypt: true,
+      //   );
+      // } else {
+      //   /// can't scan ,network required
+      //   return JackQRScanResult(
+      //     scannedValue: scanData,
+      //     actualValue: {},
+      //     decrypt: false,
+      //   );
+      // }
     } catch (e) {
+      debugPrint(
+          "----------------------decryption error----------------------");
       try {
         final actualValue = decryptAESCryptoJS(scanData, widget.securePassword);
         final data = jsonDecode(actualValue);
@@ -316,8 +364,51 @@ class _JackQRCameraState extends State<JackQRCamera> {
     if (pickedFile != null) {
       String? qrResult = await Scan.parse(pickedFile.path);
       if (qrResult == null) return null;
-      return await evaluation(qrResult);
+      return await evaluation(qrResult, false);
     }
     return null;
+  }
+}
+
+class NTPApi {
+  static Future<String?> getNtp(BuildContext context) async {
+    String? check;
+
+    final baseDio = Dio(
+      BaseOptions(
+        baseUrl: "https://www.wowme.tech/api",
+        connectTimeout: 6000,
+        receiveTimeout: 6000,
+      ),
+    );
+    baseDio.options.headers['Content-Type'] = "application/json";
+    try {
+      final Response response =
+          await baseDio.get("/v1/user/application/server/time");
+      final responseData = response.data as Map<String, dynamic>;
+
+      if (!responseData['error']) {
+        check = responseData['data'];
+      } else {
+        check = null;
+      }
+    } catch (e) {
+      check = null;
+    }
+
+    return check;
+  }
+}
+
+class NTPDate with ChangeNotifier {
+  DateTime? now;
+
+  void updateNTPDate(String? value) {
+    if (value != null) {
+      now = DateTime.parse(value);
+    }
+    now = null;
+
+    notifyListeners();
   }
 }
