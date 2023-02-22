@@ -334,8 +334,15 @@ class _JackQRCameraState extends State<JackQRCamera> {
       debugPrint(
           "----------------------decryption error----------------------");
       try {
+        debugPrint(
+            "----------------------start crypto js----------------------");
+        print(scanData);
         final actualValue = decryptAESCryptoJS(scanData, widget.securePassword);
+        print(actualValue);
         final data = jsonDecode(actualValue);
+        print(data);
+        debugPrint(
+            "----------------------crypto js success----------------------");
         return JackQRScanResult(
           scannedValue: scanData,
           actualValue: data,

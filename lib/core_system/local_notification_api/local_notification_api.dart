@@ -1,5 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:jack_components/util/download_file.dart';
+import 'package:http/http.dart' as http;
 import 'package:rxdart/subjects.dart';
 
 class JackLocalNotificationApi {
@@ -30,28 +32,27 @@ class JackLocalNotificationApi {
 
   static Future<NotificationDetails> _notificationDetails({
     String? iconPath,
-    DownloadFileType? iconType,
     String? imagePath,
-    DownloadFileType? imageType,
     String? sound,
   }) async {
     /// local notification with Icon and Image
-    final largeIconPath = iconPath != null && iconPath.startsWith("http")
-        ? await JackDownload.downloadFile(
-            url: iconPath,
-            type: iconType!,
-          )
-        : null;
-    final bigImagePath = imagePath != null && imagePath.startsWith("http")
-        ? await JackDownload.downloadFile(
-            url: imagePath,
-            type: imageType!,
-          )
-        : null;
+    http.Response? imageResponse;
+    http.Response? iconResponse;
+
+    if (imagePath != null) {
+      imageResponse = await http.get(Uri.parse(imagePath));
+    }
+    if (iconPath != null) {
+      iconResponse = await http.get(Uri.parse(iconPath));
+    }
+
     final styleInformation = iconPath != null && imagePath != null
         ? BigPictureStyleInformation(
-            FilePathAndroidBitmap(bigImagePath!),
-            largeIcon: FilePathAndroidBitmap(largeIconPath!),
+            ByteArrayAndroidBitmap.fromBase64String(
+                base64Encode(imageResponse!.bodyBytes)),
+            largeIcon: ByteArrayAndroidBitmap.fromBase64String(
+              base64Encode(iconResponse!.bodyBytes),
+            ),
           )
         : null;
 
@@ -80,10 +81,8 @@ class JackLocalNotificationApi {
     String? title,
     String? body,
     String? payload,
-    String? largeIconPath,
-    DownloadFileType? largeIconType,
-    String? bigImagePath,
-    DownloadFileType? bigImageType,
+    String? iconPath,
+    String? imagePath,
     String? soundPath,
   }) async {
     _notifications.show(
@@ -91,10 +90,8 @@ class JackLocalNotificationApi {
       title,
       body,
       await _notificationDetails(
-        iconPath: largeIconPath,
-        imagePath: bigImagePath,
-        iconType: largeIconType,
-        imageType: bigImageType,
+        iconPath: iconPath,
+        imagePath: imagePath,
         sound: soundPath,
       ),
       payload: payload,
