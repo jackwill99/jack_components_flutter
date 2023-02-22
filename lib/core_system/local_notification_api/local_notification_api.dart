@@ -46,13 +46,15 @@ class JackLocalNotificationApi {
       iconResponse = await http.get(Uri.parse(iconPath));
     }
 
-    final styleInformation = iconPath != null && imagePath != null
+    final styleInformation = imagePath != null
         ? BigPictureStyleInformation(
             ByteArrayAndroidBitmap.fromBase64String(
                 base64Encode(imageResponse!.bodyBytes)),
-            largeIcon: ByteArrayAndroidBitmap.fromBase64String(
-              base64Encode(iconResponse!.bodyBytes),
-            ),
+            largeIcon: iconPath != null
+                ? ByteArrayAndroidBitmap.fromBase64String(
+                    base64Encode(iconResponse!.bodyBytes),
+                  )
+                : null,
           )
         : null;
 
