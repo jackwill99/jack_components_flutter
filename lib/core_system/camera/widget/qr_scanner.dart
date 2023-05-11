@@ -265,49 +265,54 @@ class _JackQRCameraState extends State<JackQRCamera> {
       final actualValue =
           encryptData.decryptFernet(changeToEncrypted(base64Decode(scanData)));
       final decode = jsonDecode(actualValue);
-      debugPrint("----------------------decode success----------------------");
-      if (checkNTP) {
-        debugPrint("----------------------checkNTP true----------------------");
-        var now = await NTPApi.getNtp(context);
-        if (now == null) {
-          debugPrint("----------------------now is null----------------------");
-          return JackQRScanResult(
-            scannedValue: scanData,
-            actualValue: {},
-            decrypt: false,
-            // message: "Set time automatically in your settings.",
-          );
-        }
+      return JackQRScanResult(
+        scannedValue: scanData,
+        actualValue: decode,
+        decrypt: true,
+      );
+      // debugPrint("----------------------decode success----------------------");
+      // if (checkNTP) {
+      //   debugPrint("----------------------checkNTP true----------------------");
+      //   var now = await NTPApi.getNtp(context);
+      //   if (now == null) {
+      //     debugPrint("----------------------now is null----------------------");
+      //     return JackQRScanResult(
+      //       scannedValue: scanData,
+      //       actualValue: {},
+      //       decrypt: false,
+      //       // message: "Set time automatically in your settings.",
+      //     );
+      //   }
 
-        final dateTimeNow = DateTime.parse(now);
-        final previousData = DateTime.parse(decode['date']);
+      //   final dateTimeNow = DateTime.parse(now);
+      //   final previousData = DateTime.parse(decode['date']);
 
-        if (dateTimeNow.difference(previousData).inSeconds > 15) {
-          debugPrint(
-              "----------------------difference is lower than 15----------------------");
-          return JackQRScanResult(
-            scannedValue: scanData,
-            actualValue: {},
-            decrypt: false,
-            // message: "Set time automatically in your settings.",
-          );
-        } else {
-          debugPrint("----------------------pass----------------------");
-          return JackQRScanResult(
-            scannedValue: scanData,
-            actualValue: decode,
-            decrypt: true,
-          );
-        }
-      } else {
-        debugPrint(
-            "----------------------checkNTP false----------------------");
-        return JackQRScanResult(
-          scannedValue: scanData,
-          actualValue: decode,
-          decrypt: true,
-        );
-      }
+      //   if (dateTimeNow.difference(previousData).inSeconds > 15) {
+      //     debugPrint(
+      //         "----------------------difference is lower than 15----------------------");
+      //     return JackQRScanResult(
+      //       scannedValue: scanData,
+      //       actualValue: {},
+      //       decrypt: false,
+      //       // message: "Set time automatically in your settings.",
+      //     );
+      //   } else {
+      //     debugPrint("----------------------pass----------------------");
+      //     return JackQRScanResult(
+      //       scannedValue: scanData,
+      //       actualValue: decode,
+      //       decrypt: true,
+      //     );
+      //   }
+      // } else {
+      //   debugPrint(
+      //       "----------------------checkNTP false----------------------");
+      //   return JackQRScanResult(
+      //     scannedValue: scanData,
+      //     actualValue: decode,
+      //     decrypt: true,
+      //   );
+      // }
 
       // if (widget.passNTP) {
       //   /// passs

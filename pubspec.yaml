@@ -48,7 +48,7 @@ dependencies:
     # background process
     #  workmanager: ^0.5.1
     # modal bottom sheet
-    modal_bottom_sheet: ^2.1.2
+    # modal_bottom_sheet: ^2.1.2
     encrypt: ^5.0.1
     ntp: ^2.0.0
     scan: ^1.6.0
