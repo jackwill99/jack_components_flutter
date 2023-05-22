@@ -40,7 +40,7 @@ dependencies:
     # camera
     camera: ^0.10.0+3
     # information of the package
-    package_info_plus: ^3.0.1
+    package_info_plus: ^4.0.1
     # To compare version string easily
     pub_semver: ^2.1.2
     # to launcher another application
