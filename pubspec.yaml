@@ -14,7 +14,7 @@ dependencies:
     # provider
     provider: ^6.0.3
     # dio http library
-    dio: ^4.0.6
+    dio: ^5.2.1+1
     # file to save in device path
     path_provider: ^2.0.11
     # uuid
