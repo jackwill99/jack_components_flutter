@@ -18,8 +18,8 @@ class JackApi {
     _baseDio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
-        connectTimeout: connectTimeout,
-        receiveTimeout: receiveTimeout,
+        connectTimeout: Duration(milliseconds: connectTimeout ?? 6000),
+        receiveTimeout: Duration(milliseconds: receiveTimeout ?? 6000),
       ),
     );
   }

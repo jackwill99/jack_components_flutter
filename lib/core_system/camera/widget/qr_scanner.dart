@@ -389,8 +389,8 @@ class NTPApi {
     final baseDio = Dio(
       BaseOptions(
         baseUrl: "https://www.wowme.tech/api",
-        connectTimeout: 6000,
-        receiveTimeout: 6000,
+        connectTimeout: const Duration(milliseconds: 6000),
+        receiveTimeout: const Duration(milliseconds: 6000),
       ),
     );
     baseDio.options.headers['Content-Type'] = "application/json";
